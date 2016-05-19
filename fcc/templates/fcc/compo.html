@@ -1,4 +1,4 @@
-{% extends 'fcc\base.html' %}
+{% extends 'fcc/base.html' %}
 {% block title %}Compo{% endblock title %}
 {% block id %}2{% endblock id %}
 
@@ -7,7 +7,7 @@
 
     <div class="well">
         <div class="container">
-            <p>{{ request.user.username }}, indique ta dispo pour le prochain match</p>
+            <p>{{ request.user.username }}, indique ta disponibilité pour le prochain match</p>
             <p>
                 <a class="btn btn-sm btn-primary" href="/fcc/inscription/1" role ="button">Dispo</a>
                 <a class="btn btn-sm btn-danger" href="/fcc/inscription/3" role ="button">Absent</a>
