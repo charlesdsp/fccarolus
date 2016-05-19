@@ -1,0 +1,41 @@
+{% extends 'fcc\base.html' %}
+{% block title %}Résultats{% endblock title %}
+{% block id %}3{% endblock id %}
+
+{% block content %}
+
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Résultat du match du {{ match.dateMatch }}</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">FC Carolus {{ match.scoreA }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for compoA in compoA %}
+                            <li> {{ compoA.userFCC.user.username }} {{ compoA.buts }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">SAC {{ match.scoreB }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for compoB in compoB %}
+                            <li> {{ compoB.userFCC.user.username }} {{ compoB.buts }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+{% endblock content %}

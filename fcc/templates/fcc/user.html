@@ -1,0 +1,26 @@
+{% extends 'fcc\base.html' %}
+{% block title %}Profil{% endblock title %}
+{% block id %}7{% endblock id %}
+
+{% block content %}
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Profil de  {{ user.user.username }}</p>
+        </div>
+    </div>
+    <div class="container">
+        <div>
+        	<h3>Surnom : {{ user.user.username }}</h3>
+        	<p>Email : {{ user.user.email }}</p>
+          <p>Téléphone : {{ user.telephone }}</p>
+          <form action="{% url upload_pic %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <p>
+                    <input id="id_image" type="file" class="" name="image">
+                </p>
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}

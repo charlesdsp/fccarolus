@@ -1,0 +1,45 @@
+{% extends 'fcc\base.html' %}
+{% block title %}Statistiques{% endblock title %}
+{% block id %}4{% endblock id %}
+
+{% block content %}
+
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Statistiques de la session {{ session.id_session }}</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Joueur</th>
+                        <th>Points</th>
+                        <th>Matchs</th>
+                        <th>V</th>
+                        <th>N</th>
+                        <th>D</th>
+                        <th>Buts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for stat in stats %}
+                    <tr>
+                        <td>{{ stat.classement}}</td>
+                        <td>{{ stat.userFCC.user.username }}</td>
+                        <td>{{ stat.points }}</td>
+                        <td>{{ stat.nb_matchs }} ({{ stat.moyenne }})</td>
+                        <td>{{ stat.victoire }}</td>
+                        <td>{{ stat.nul }}</td>
+                        <td>{{ stat.defaite }}</td>
+                        <td>{{ stat.buts }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</div>
+{% endblock content %}

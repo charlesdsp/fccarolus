@@ -1,0 +1,14 @@
+{% extends 'fcc\base.html' %}
+{% block title %}Accueil{% endblock title %}
+{% block id %}1{% endblock id %}
+
+{% block content %}
+<div class="well well-sm">
+    <div class="container">
+        <p>Date du prochain match : {{ prochainMatch.dateMatch }}</p>
+        <p>{{ nbInscrits }} inscrits, {{ nbAbsents }} absents</p>
+    </div>
+</div>
+<div class="container">
+</div>
+{% endblock content %}

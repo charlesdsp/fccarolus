@@ -1,0 +1,62 @@
+{% extends 'fcc\base.html' %}
+{% block title %}Compo{% endblock title %}
+{% block id %}2{% endblock id %}
+
+{% block content %}
+
+
+    <div class="well">
+        <div class="container">
+            <p>{{ request.user.username }}, indique ta dispo pour le prochain match</p>
+            <p>
+                <a class="btn btn-sm btn-primary" href="/fcc/inscription/1" role ="button">Dispo</a>
+                <a class="btn btn-sm btn-danger" href="/fcc/inscription/3" role ="button">Absent</a>
+            </p>
+        </div>
+    </div>
+    <div class="container">
+    <h3>Compo du prochain match</h3>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">FC Carolus</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for compoAdispo in compoAdispo %}
+                            <li> {{ compoAdispo.userFCC.user.username }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">SAC</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for compoBdispo in compoBdispo %}
+                            <li> {{ compoBdispo.userFCC.user.username }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if absents %}
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Absents</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% for absents in absents %}
+                            <li> {{ absents.userFCC.user.username }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock content %}
