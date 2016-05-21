@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
-from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat
+from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm
 import operator
 
@@ -236,3 +236,14 @@ def user_logout(request):
     """Déconnexion du site."""
     logout(request)
     return HttpResponseRedirect('login')
+
+
+def awards(request, year=None):
+    """Déconnexion du site."""
+    annee = year
+    if year is None:
+        annee = Award.objects.all().order_by('-annee')[0].annee
+        print(annee)
+    liste_awards = Award.objects.filter(annee=annee).order_by('nom_award')
+    liste_vainqueurs = AwardVainqueur.objects.filter(award__annee=annee).order_by('award__nom_award')
+    return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee})

@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^inscription/(?P<dispo>\d+)$', views.inscription),
     url(r'^addResults$', views.addResultats),
     url(r'^logout$', views.user_logout, name='logout'),
+    url(r'^awards$', views.awards),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,31 @@
+{% extends 'fcc/base.html' %}
+{% block title %}Awards{% endblock title %}
+{% block id %}6{% endblock id %}
+{% load fcc_extras %}
+{% block content %}
+
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Awards FC Carolus United {{ year }}</p>
+        </div>
+    </div>
+    <div class="container">
+            {% load thumbnail %}
+            <ul class="list-unstyled">
+            {% for liste_awards in liste_awards %}
+                <li class="team">
+                    <div>
+                        <p class="award">{{ liste_awards.nom_award }}</p>
+                        {% for liste_vainqueurs in liste_vainqueurs %}
+                            {% if liste_vainqueurs.award == liste_awards %}
+                                <p>{% thumbnail liste_vainqueurs.userFCC.photo "50x50" crop="80% top" as im %}
+                                <img src="{{ im.url }}">
+                                {% endthumbnail %}{{ liste_vainqueurs.userFCC.user.username }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endfor %}
+            </ul>
+</div>
+{% endblock content %}
