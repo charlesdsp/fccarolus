@@ -3,10 +3,15 @@
 {% block id %}7{% endblock id %}
 
 {% block content %}
+{% load thumbnail %}
 
 <div class="well well-sm">
         <div class="container">
-            <p>Profil de  {{ user.user.username }}</p>
+            <p>Profil de  {{ user.user.username }}
+                {% thumbnail user.photo "40x40" crop="80% top" as im %}
+                <img src="{{ im.url }}">
+                {% endthumbnail %}
+            </p>
         </div>
     </div>
     <div class="container">

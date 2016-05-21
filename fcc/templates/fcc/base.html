@@ -33,6 +33,7 @@
         {% load static %}
         <link rel="stylesheet" href="{% static 'fcc.css' %}">
         <script src="{% static "navbar.js" %}"></script>
+        <script src="https://use.fontawesome.com/1c9af3eabf.js"></script>
     </head>
     {# Display django.contrib.messages as Bootstrap alerts #}
     {% bootstrap_messages %}
@@ -53,17 +54,17 @@
               </div>
               <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                  <li id="home"><a href="/fcc/home">Accueil</a></li>
-                  <li id="compo"><a href="/fcc/compo">Compo</a></li>
-                  <li id="results"><a href="/fcc/results">Résultats</a></li>
-                  <li id="session"><a href="#contact">Session</a></li>
-                  <li id="stats"><a href="/fcc/stats">Stats</a></li>
-                  <li id="awards"><a href="#contact">Awards</a></li>
+                  <li id="home"><a href="/fcc/home"><i class="fa fa-home" aria-hidden="true"></i></a></li>
+                  <li id="compo"><a href="/fcc/compo"><i class="fa fa-users" aria-hidden="true"></i> Compo</a></li>
+                  <li id="results"><a href="/fcc/results"><i class="fa fa-futbol-o" aria-hidden="true"></i> Résultats</a></li>
+                  <li id="session"><a href="#contact"><i class="fa fa-calendar" aria-hidden="true"></i> Session</a></li>
+                  <li id="stats"><a href="/fcc/stats"><i class="fa fa-bar-chart" aria-hidden="true"></i> Stats</a></li>
+                  <li id="awards"><a href="#contact"><i class="fa fa-trophy" aria-hidden="true"> </i> Awards</a></li>
                   <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>{{ request.user.username }} </strong><span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                      <li id="user"><a href="/fcc/user"><span class="glyphicon glyphicon-user"></span> Profil</a></li>
-                      <li><a href={% url 'logout' %}><span class="glyphicon glyphicon-off"></span> Déconnexion</a></li>
+                      <li id="user"><a href="/fcc/user"><i class="fa fa-user" aria-hidden="true"></i> Profil</a></li>
+                      <li><a href={% url 'logout' %}><i class="fa fa-power-off" aria-hidden="true"></i> Déconnexion</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -71,15 +72,16 @@
             </div>
           </nav>
           {# The Document Body #}
-          <div id="site-wrapper">
+          <div id="wrap">
               {% block content %}
                   if you see this, something is wrong!
               {% endblock content %}
+              <div id="push"></div>
           </div>
           {# The Footer #}
-          <div class="footer">
+          <div class="footer navbar-fixed-bottom">
               <div class="container">
-                  <p>Charlie @ 2016</p>
+                  <p class="text-muted">Charlie @ 2016</p>
               </div>
           </div>
       </body>

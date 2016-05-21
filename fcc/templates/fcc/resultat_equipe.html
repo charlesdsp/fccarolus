@@ -1,0 +1,10 @@
+{% load thumbnail %}
+<ul class="list-unstyled">
+{% for result_equipe in result_equipe %}
+    <li class="team"> {% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
+            <img src="{{ im.url }}">
+        {% endthumbnail %}
+        {{ result_equipe.userFCC.user.username }}
+        <span class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</span>
+{% endfor %}
+</ul>

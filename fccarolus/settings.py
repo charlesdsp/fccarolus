@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fcc',
     'bootstrap3',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -124,6 +125,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = 'C:/fccarolus/fccarolus/fcc/media'
+MEDIA_ROOT = os.path.join(BASE_DIR, '/fccarolus/fccarolus/fcc/media/')
 
 MEDIA_URL = '/fcc/media/'

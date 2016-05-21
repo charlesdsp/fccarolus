@@ -1,7 +1,7 @@
 {% extends 'fcc/base.html' %}
 {% block title %}Résultats{% endblock title %}
 {% block id %}3{% endblock id %}
-
+{% load fcc_extras %}
 {% block content %}
 
 
@@ -18,9 +18,7 @@
                         <h3 class="panel-title">FC Carolus {{ match.scoreA }}</h3>
                     </div>
                     <div class="panel-body">
-                        {% for compoA in compoA %}
-                            <li> {{ compoA.userFCC.user.username }} {{ compoA.buts }}
-                        {% endfor %}
+                        {% get_resultat_equipe m=match.id_match equipe="A" %}
                     </div>
                 </div>
             </div>
@@ -30,9 +28,7 @@
                         <h3 class="panel-title">SAC {{ match.scoreB }}</h3>
                     </div>
                     <div class="panel-body">
-                        {% for compoB in compoB %}
-                            <li> {{ compoB.userFCC.user.username }} {{ compoB.buts }}
-                        {% endfor %}
+                        {% get_resultat_equipe m=match.id_match equipe="B" %}
                     </div>
                 </div>
             </div>

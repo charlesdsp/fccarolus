@@ -1,7 +1,7 @@
 {% extends 'fcc/base.html' %}
 {% block title %}Compo{% endblock title %}
 {% block id %}2{% endblock id %}
-
+{% load fcc_extras %}
 {% block content %}
 
 
@@ -23,21 +23,17 @@
                         <h3 class="panel-title">FC Carolus</h3>
                     </div>
                     <div class="panel-body">
-                        {% for compoAdispo in compoAdispo %}
-                            <li> {{ compoAdispo.userFCC.user.username }}
-                        {% endfor %}
+                        {% get_compo_equipe equipe="A" %}
                     </div>
                 </div>
-            </div>
+                </div>
             <div class="col-sm-4">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">SAC</h3>
                     </div>
                     <div class="panel-body">
-                        {% for compoBdispo in compoBdispo %}
-                            <li> {{ compoBdispo.userFCC.user.username }}
-                        {% endfor %}
+                        {% get_compo_equipe equipe="B" %}
                     </div>
                 </div>
             </div>
@@ -50,9 +46,21 @@
                         <h3 class="panel-title">Absents</h3>
                     </div>
                     <div class="panel-body">
-                        {% for absents in absents %}
-                            <li> {{ absents.userFCC.user.username }}
-                        {% endfor %}
+                        {% get_compo_equipe equipe="C" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if en_attente %}
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-wait">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">En attente</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% get_compo_equipe equipe="D" %}
                     </div>
                 </div>
             </div>

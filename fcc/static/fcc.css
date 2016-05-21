@@ -65,3 +65,71 @@
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
     background-color: #58A937;
 }
+
+.team {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    /*border: 1px solid transparent;*/
+    border-radius: 2px;
+    /* -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05); */
+    /* box-shadow: 0 1px 1px rgba(0,0,0,.05); */
+}
+
+.panel-wait>.panel-heading {
+    color: #080808;
+    background-color: #eee;
+    border-color: #ccc;
+}
+
+.panel-wait {
+    border-color: #ccc;
+}
+
+.moyenne {
+    font-size: smaller;
+}
+
+.buts {
+    font-size: smaller;
+    float: right;
+}
+
+.badge-green {
+    background-color: #73D04E;
+}
+
+.badge-red {
+    background-color: #A94442;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    background-color: #f5f5f5;
+}
+
+.container .text-muted {
+    margin: 10px 0;
+    text-align: center;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;

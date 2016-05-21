@@ -5,8 +5,11 @@
 {% block content %}
 <div class="well well-sm">
     <div class="container">
-        <p>Date du prochain match : {{ prochainMatch.dateMatch }}</p>
-        <p>{{ nbInscrits }} inscrits, {{ nbAbsents }} absents</p>
+        <p>Prochain match : {{ prochainMatch.dateMatch }}
+            <a href="/fcc/compo"><span class="badge badge-green">{{ nbInscrits }}</span></a>
+            <a href="/fcc/compo"><span class="badge badge-red">{{ nbAbsents }}</span></a>
+            <a href="/fcc/compo"><span class="badge badge-grey">{{ nbAttente }}</a>
+        </p>
     </div>
 </div>
 <div class="container">

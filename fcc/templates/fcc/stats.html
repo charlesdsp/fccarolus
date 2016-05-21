@@ -1,7 +1,7 @@
 {% extends 'fcc/base.html' %}
 {% block title %}Statistiques{% endblock title %}
 {% block id %}4{% endblock id %}
-
+{% load thumbnail %}
 {% block content %}
 
 
@@ -17,21 +17,23 @@
                     <tr>
                         <th>#</th>
                         <th>Joueur</th>
-                        <th>Points</th>
+                        <th>Pts</th>
                         <th>Matchs</th>
                         <th>V</th>
                         <th>N</th>
                         <th>D</th>
-                        <th>Buts</th>
+                        <th><i class="fa fa-futbol-o" aria-hidden="true"></i></th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for stat in stats %}
                     <tr>
                         <td>{{ stat.classement}}</td>
-                        <td>{{ stat.userFCC.user.username }}</td>
+                        <td>{% thumbnail stat.userFCC.photo "20x20" crop="80% top" as im %}
+                                <img src="{{ im.url }}">
+                            {% endthumbnail %}{{ stat.userFCC.user.username }}</td>
                         <td>{{ stat.points }}</td>
-                        <td>{{ stat.nb_matchs }} ({{ stat.moyenne }})</td>
+                        <td>{{ stat.nb_matchs }} <span class="moyenne">({{ stat.moyenne }})</span></td>
                         <td>{{ stat.victoire }}</td>
                         <td>{{ stat.nul }}</td>
                         <td>{{ stat.defaite }}</td>

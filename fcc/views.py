@@ -13,17 +13,26 @@ from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm
 import operator
 
+import logging
+from sorl.thumbnail.log import ThumbnailLogHandler
+
+handler = ThumbnailLogHandler()
+handler.setLevel(logging.ERROR)
+logging.getLogger('sorl.thumbnail').addHandler(handler)
+
 
 @login_required
 def home(request):
     """Page d'accueil."""
     sessionActive = Session.objects.filter(ouverte=True)[0]
-    listeInscrits = UserFCC.objects.filter(inscrit=1 or 2)
-    listeAbsents = UserFCC.objects.filter(inscrit=3)
-    nbInscrits = len(listeInscrits)
-    nbAbsents = len(listeAbsents)
+    liste_inscrits = UserFCC.objects.filter(inscrit=1)
+    liste_absents = UserFCC.objects.filter(inscrit=3)
+    liste_en_attente = UserFCC.objects.filter(inscrit=0)
+    nb_inscrits = len(liste_inscrits)
+    nb_absents = len(liste_absents)
+    nb_en_attente = len(liste_en_attente)
     prochainMatch = Match.objects.filter(ouverte=True)[0]
-    return render(request, 'fcc/home.html', {'prochainMatch': prochainMatch, 'sessionActive': sessionActive, 'nbInscrits': nbInscrits, 'nbAbsents': nbAbsents})
+    return render(request, 'fcc/home.html', {'prochainMatch': prochainMatch, 'sessionActive': sessionActive, 'nbInscrits': nb_inscrits, 'nbAbsents': nb_absents, 'nbAttente': nb_en_attente})
 
 
 @login_required
@@ -59,10 +68,9 @@ def user(request, id_user=None):
 def compo(request):
     """Page de la compo du match."""
     sessionActive = Session.objects.filter(ouverte=True)[0]
-    compoAdispo = Compo.objects.filter(session__id_session=sessionActive.id_session, equipe='A', userFCC__inscrit='1').order_by('userFCC__dtUpdate')
-    compoBdispo = Compo.objects.filter(session__id_session=sessionActive.id_session, equipe='B', userFCC__inscrit='1').order_by('userFCC__dtUpdate')
     absents = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='3').order_by('userFCC__dtUpdate')
-    return render(request, 'fcc/compo.html', {'compoAdispo': compoAdispo, 'compoBdispo': compoBdispo, 'absents': absents})
+    en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0').order_by('userFCC__user__username')
+    return render(request, 'fcc/compo.html', {'absents': absents, 'en_attente': en_attente})
 
 
 def loginFCC(request):
@@ -185,9 +193,7 @@ def majStat(userFCC, win, buts, session):
 def results(request):
     """Page de résultat d'un match."""
     derniermatch = Match.objects.exclude(inscrits=0).order_by('-dateMatch')[0]
-    compoA = Resultat.objects.filter(match=derniermatch, equipe='A').order_by('-buts')
-    compoB = Resultat.objects.filter(match=derniermatch, equipe='B').order_by('-buts')
-    return render(request, 'fcc/results.html', {'compoA': compoA, 'compoB': compoB, 'match': derniermatch})
+    return render(request, 'fcc/results.html', {'match': derniermatch})
 
 
 def statsBySession(session):

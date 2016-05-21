@@ -1,0 +1,9 @@
+{% load thumbnail %}
+<ul class="list-unstyled">
+{% for compo_equipe in compo_equipe %}
+    <li class="team"> {% thumbnail compo_equipe.userFCC.photo "30x30" crop="80% top" as im %}
+            <img src="{{ im.url }}">
+        {% endthumbnail %}
+        {{ compo_equipe.userFCC.user.username }}
+{% endfor %}
+</ul>
