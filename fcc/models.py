@@ -18,7 +18,7 @@ class UserFCC(models.Model):
     titulaire = models.BooleanField(default=False)
     inscrit = models.IntegerField(default=0)
     paiement = models.BooleanField(default=False)
-    photo = models.ImageField(null=True, blank=True, upload_to='/avatar/')
+    photo = models.ImageField(null=True, blank=True, upload_to='avatar/')
     dtUpdate = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
@@ -104,3 +104,26 @@ class Compo(models.Model):
     def __str__(self):
         """Description."""
         return "User " + self.userFCC.user.username + ", Session " + str(self.session.id_session) + ", Equipe " + self.equipe
+
+
+class Award(models.Model):
+    """Awards."""
+
+    id_award = models.AutoField(primary_key=True)
+    annee = models.IntegerField(default='2015')
+    nom_award = models.CharField(max_length=100)
+
+    def __str__(self):
+        """Description."""
+        return "Award " + self.nom_award + " " + str(self.annee)
+
+
+class AwardVainqueur(models.Model):
+    """Lauréat d'un award."""
+
+    award = models.ForeignKey('Award')
+    userFCC = models.ForeignKey('UserFCC')
+
+    def __str__(self):
+        """Description."""
+        return "Award " + self.award.nom_award + " " + str(self.award.annee) + self.userFCC.user.username

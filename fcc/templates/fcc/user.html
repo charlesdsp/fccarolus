@@ -10,17 +10,20 @@
         </div>
     </div>
     <div class="container">
-        <div>
-        	<h3>Surnom : {{ user.user.username }}</h3>
-        	<p>Email : {{ user.user.email }}</p>
-          <p>Téléphone : {{ user.telephone }}</p>
-          <form action="{% url upload_pic %}" method="post" enctype="multipart/form-data">{% csrf_token %}
-                <p>
-                    <input id="id_image" type="file" class="" name="image">
-                </p>
-                <input type="submit" value="Submit" />
+        {% if request.user == user.user %}
+            <div>
+            <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ user_form.as_p }}
+                {{ userFCC_form.as_p }}
+                <input class="btn btn-primary" type="submit" name="submit" value="Modifier" />
             </form>
-        </div>
+            </div>
+        {% else %}
+            <p>Email : {{ user.user.email }}</p>
+            <p>GSM : {{ user.tel }}</p>
+            <p>Titulaire : {{ user.titulaire }}</p>
+        {% endif %}
     </div>
 
 {% endblock content %}

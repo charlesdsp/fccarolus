@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^login$', views.loginFCC),
     url(r'^inscription/(?P<dispo>\d+)$', views.inscription),
     url(r'^addResults$', views.addResultats),
+    url(r'^logout$', views.user_logout, name='logout'),
 ]

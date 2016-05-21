@@ -63,7 +63,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><strong>{{ request.user.username }} </strong><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                       <li id="user"><a href="/fcc/user"><span class="glyphicon glyphicon-user"></span> Profil</a></li>
-                      <li><a href="#"><span class="glyphicon glyphicon-off"></span> Déconnexion</a></li>
+                      <li><a href={% url 'logout' %}><span class="glyphicon glyphicon-off"></span> Déconnexion</a></li>
                     </ul>
                   </li>
                 </ul>

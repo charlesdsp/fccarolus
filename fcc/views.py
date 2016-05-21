@@ -5,12 +5,12 @@ home, inscrits etc.
 """
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat
-from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm
+from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm
 import operator
 
 
@@ -29,11 +29,29 @@ def home(request):
 @login_required
 def user(request, id_user=None):
     """Page de profil."""
+    if request.method == "POST":
+        user_form = UserForm(data=request.POST)
+        userFCC_form = UserFCCForm(data=request.POST)
+
+        if user_form.is_valid() and userFCC_form.is_valid():
+            u = request.user
+            uFCC = UserFCC.objects.get(user=u)
+            u.email = user_form.cleaned_data['email']
+            u.save()
+            uFCC.tel = userFCC_form.cleaned_data['tel']
+            if 'photo' in request.FILES:
+                uFCC.photo = request.FILES['photo']
+            uFCC.save()
+        else:
+            print(user_form.errors, userFCC_form.errors)
+
     if id_user is None:
         u = request.user
-        id_user = UserFCC.objects.get(user=u).idUserFCC
+        id_user = UserFCC.objects.get(user=u)
+        user_form = UserForm(initial={'email': id_user.user.email})
+        userFCC_form = UserFCCForm(initial={'tel': id_user.tel, 'photo': id_user.photo})
+        return render(request, 'fcc/user.html', {'user': id_user, 'user_form': user_form, 'userFCC_form': userFCC_form})
     user = get_object_or_404(UserFCC, idUserFCC=id_user)
-    print(user)
     return render(request, 'fcc/user.html', {'user': user})
 
 
@@ -66,7 +84,7 @@ def loginFCC(request):
             if user:  # Si l'objet renvoyé n'est pas None
                 login(request, user)  # nous connectons l'utilisateur
                 if next == "":
-                    return HttpResponseRedirect('/issueapp/')
+                    return HttpResponseRedirect('/fcc/home')
                 else:
                     return HttpResponseRedirect(next)
             else:  # sinon une erreur sera affichée
@@ -205,3 +223,10 @@ def majClass(request):
 def majInscrits():
     """Réinitialisation des informations d'inscription au prochain match."""
     UserFCC.objects.all().update(inscrit=0)
+
+
+@login_required
+def user_logout(request):
+    """Déconnexion du site."""
+    logout(request)
+    return HttpResponseRedirect('login')

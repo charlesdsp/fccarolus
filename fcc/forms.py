@@ -6,6 +6,7 @@ Connexion, Resultats etc.
 
 from django import forms
 from fcc.models import Resultat, Match, UserFCC
+from django.contrib.auth.models import User
 
 
 class ConnexionForm(forms.Form):
@@ -49,3 +50,26 @@ class ResultatMatchForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
             model = Match
             fields = ('scoreA', 'scoreB',)
+
+
+class UserForm(forms.ModelForm):
+    """Edition du profil."""
+
+    email = forms.EmailField(label="email")
+
+    class Meta:
+        # Provide an association between the ModelForm and a model
+            model = User
+            fields = ('email',)
+
+
+class UserFCCForm(forms.ModelForm):
+    """Edition du profil."""
+
+    tel = forms.CharField(max_length=10, label="GSM", required=False)
+    photo = forms.ImageField(required=False)
+
+    class Meta:
+        # Provide an association between the ModelForm and a model
+            model = UserFCC
+            fields = ('tel', 'photo',)
