@@ -8,9 +8,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
-from django.http import HttpResponseRedirect
-from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur
-from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm
+from django.http import HttpResponseRedirect, JsonResponse
+from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker
+from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm
 import operator
 
 import logging
@@ -32,7 +32,40 @@ def home(request):
     nb_absents = len(liste_absents)
     nb_en_attente = len(liste_en_attente)
     prochainMatch = Match.objects.filter(ouverte=True)[0]
-    return render(request, 'fcc/home.html', {'prochainMatch': prochainMatch, 'sessionActive': sessionActive, 'nbInscrits': nb_inscrits, 'nbAbsents': nb_absents, 'nbAttente': nb_en_attente})
+    """Génère un formulaire de news."""
+    u = request.user
+    userFCC = UserFCC.objects.get(user=u)
+    if request.method == "POST":
+        print("form passe")
+        if request.is_ajax():
+            print("ISAJAX")
+            # Always use get on request.POST. Correct way of querying a QueryDict.
+            titre = request.POST.get('titre')
+            print("tITRE" + titre)
+            message = request.POST.get('message')
+            data = {"titre": titre, "message": message}
+            news = News()
+            news.userFCC = userFCC
+            news.titre = titre
+            news.message = message
+            news.save()
+    news_form = NewsForm()
+    liste_news = News.objects.all().order_by('-date')
+    return render(request, 'fcc/home.html', {
+        'prochainMatch': prochainMatch,
+        'sessionActive': sessionActive,
+        'nbInscrits': nb_inscrits,
+        'nbAbsents': nb_absents,
+        'nbAttente': nb_en_attente,
+        'news_form': news_form,
+        'news': liste_news
+    })
+
+
+def news(request):
+    """Affiche les news sur la page d'accueil."""
+    liste_news = News.objects.all().order_by('-date')
+    return render(request, 'fcc/news.html', {'news': liste_news})
 
 
 @login_required
@@ -67,10 +100,23 @@ def user(request, id_user=None):
 @login_required
 def compo(request):
     """Page de la compo du match."""
+    match = Match.objects.filter(ouverte=True)[0]
+    if request.method == "POST":
+        joker_form = JokerForm(request.POST)
+        if joker_form.is_valid():
+            joker = Joker()
+            joker.joker = joker_form.cleaned_data["joker"]
+            u = request.user
+            userFCC = UserFCC.objects.get(user=u)
+            joker.userFCC = userFCC
+            joker.match = match
+            joker.save()
     sessionActive = Session.objects.filter(ouverte=True)[0]
     absents = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='3').order_by('userFCC__dtUpdate')
     en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0').order_by('userFCC__user__username')
-    return render(request, 'fcc/compo.html', {'absents': absents, 'en_attente': en_attente})
+    liste_jokers = Joker.objects.filter(match=match)
+    joker_form = JokerForm()
+    return render(request, 'fcc/compo.html', {'absents': absents, 'en_attente': en_attente, 'liste_jokers': liste_jokers, 'joker_form': joker_form})
 
 
 def loginFCC(request):
@@ -243,7 +289,13 @@ def awards(request, year=None):
     annee = year
     if year is None:
         annee = Award.objects.all().order_by('-annee')[0].annee
-        print(annee)
+    if request.method == "POST":
+        year_form = YearAwardsForm(data=request.POST)
+
+        if year_form.is_valid():
+            annee = year_form.cleaned_data['year']
     liste_awards = Award.objects.filter(annee=annee).order_by('nom_award')
     liste_vainqueurs = AwardVainqueur.objects.filter(award__annee=annee).order_by('award__nom_award')
-    return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee})
+    year_form = YearAwardsForm(initial={'year': annee})
+    print(year_form)
+    return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form})

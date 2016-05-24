@@ -5,7 +5,7 @@ Connexion, Resultats etc.
 """
 
 from django import forms
-from fcc.models import Resultat, Match, UserFCC
+from fcc.models import Resultat, Match, UserFCC, News, Joker
 from django.contrib.auth.models import User
 
 
@@ -14,6 +14,19 @@ class ConnexionForm(forms.Form):
 
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
+
+
+class YearAwardsForm(forms.Form):
+    """Sélection de l'année des awards."""
+
+    YEAR_AWARDS = [('2014', '2014'), ('2015', '2015'), ('2016', '2016'), ]
+    year = forms.ChoiceField(choices=YEAR_AWARDS)
+
+
+class JokerForm(forms.Form):
+    """Ajout d'un joker dans la compo."""
+
+    joker = forms.CharField(label="Joker", max_length=20)
 
 
 class ResultatTeamAForm(forms.ModelForm):
@@ -73,3 +86,15 @@ class UserFCCForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
             model = UserFCC
             fields = ('tel', 'photo',)
+
+
+class NewsForm(forms.ModelForm):
+    """Ajout d'une news sur la page d'accueil."""
+
+    titre = forms.CharField(max_length=100)
+    message = forms.Textarea()
+
+    class Meta:
+        # Provide an association between the ModelForm and a model
+            model = News
+            fields = ('titre', 'message',)

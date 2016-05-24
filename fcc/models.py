@@ -42,6 +42,18 @@ class Match(models.Model):
         return str(self.id_match)
 
 
+class Joker(models.Model):
+    """Description d'un joker."""
+
+    match = models.ForeignKey('Match')
+    joker = models.CharField(max_length=20)
+    userFCC = models.ForeignKey('UserFCC')
+
+    def __str__(self):
+        """Description."""
+        return str(self.joker) + ", joker de " + self.userFCC.user.username
+
+
 class Session(models.Model):
     """Session."""
 
@@ -127,3 +139,16 @@ class AwardVainqueur(models.Model):
     def __str__(self):
         """Description."""
         return "Award " + self.award.nom_award + " " + str(self.award.annee) + self.userFCC.user.username
+
+
+class News(models.Model):
+    """News."""
+
+    userFCC = models.ForeignKey('UserFCC')
+    titre = models.CharField(max_length=100)
+    message = models.TextField()
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """Description."""
+        return self.titre + " par " + self.userFCC.user.username

@@ -38,6 +38,24 @@
                 </div>
             </div>
         </div>
+        {% if liste_jokers %}
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-joker">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Jokers</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                        {% for liste_jokers in liste_jokers %}
+                            <li class="team"> {{ liste_jokers.joker }} (par {{ liste_jokers.userFCC.user.username }})
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% if absents %}
         <div class="row">
             <div class="col-sm-4">
@@ -66,5 +84,12 @@
             </div>
         </div>
         {% endif %}
+        <div class="row">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ joker_form }}
+                <input class="btn btn-primary btn-sm" type="submit" name="submit" value="Ajouter" />
+            </form>
+        </div>
     </div>
 {% endblock content %}
