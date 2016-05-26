@@ -19,6 +19,7 @@ class UserFCC(models.Model):
     inscrit = models.IntegerField(default=0)
     paiement = models.BooleanField(default=False)
     photo = models.ImageField(null=True, blank=True, upload_to='avatar/')
+    has_voted = models.BooleanField(default=False)
     dtUpdate = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
@@ -73,6 +74,8 @@ class Resultat(models.Model):
     userFCC = models.ForeignKey('UserFCC')
     equipe = models.CharField(max_length=1, default="A")
     buts = models.IntegerField(default=0)
+    somme_notes = models.IntegerField(default=0)
+    moyenne_note = models.DecimalField(default=0, max_digits=3, decimal_places=2)
 
     def __str__(self):
         """Description."""
@@ -152,3 +155,17 @@ class News(models.Model):
     def __str__(self):
         """Description."""
         return self.titre + " par " + self.userFCC.user.username
+
+
+class NoteMatch(models.Model):
+    """Note pour un match donné."""
+
+    id_note = models.AutoField(primary_key=True)
+    joueur = models.ForeignKey('UserFCC', related_name="Joueur")
+    userFCC = models.ForeignKey('UserFCC', related_name="Votant")
+    match = models.ForeignKey('Match')
+    note = models.IntegerField(default='0')
+
+    def __str__(self):
+        """Description."""
+        return self.joueur.user.username + self.note + " par " + self.userFCC.user.username

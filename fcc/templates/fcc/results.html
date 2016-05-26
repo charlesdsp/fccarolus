@@ -4,15 +4,31 @@
 {% load fcc_extras %}
 {% block content %}
 
-
+<script>
+function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+               var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+             }
+          }
+      }
+ return cookieValue;
+}
+</script>
 <div class="well well-sm">
-        <div class="container">
+        <div id="{{ match.id_match }}" class="container">
             <p>Résultat du match du {{ match.dateMatch }}</p>
         </div>
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-6">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">FC Carolus {{ match.scoreA }}</h3>
@@ -22,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-6">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">SAC {{ match.scoreB }}</h3>

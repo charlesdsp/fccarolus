@@ -113,7 +113,7 @@
 
 .buts {
     font-size: smaller;
-    float: right;
+    display: inline;
 }
 
 .badge-green {
@@ -187,4 +187,13 @@ float:right;
 .news-message {
     margin: 0 0 10px;
     overflow: hidden;
+}
+
+.my-rating {
+    display: inline;
+    float: right;
+}
+
+.result-joueur {
+    display: inline;
 }

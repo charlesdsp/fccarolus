@@ -1,10 +1,48 @@
 {% load thumbnail %}
 <ul class="list-unstyled">
 {% for result_equipe in result_equipe %}
-    <li class="team"> {% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
+    <li class="team"> <div id="id-user-{{ result_equipe.userFCC.idUserFCC }}" class="result-joueur">{% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
             <img src="{{ im.url }}">
         {% endthumbnail %}
-        {{ result_equipe.userFCC.user.username }}
-        <span class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</span>
+        {{ result_equipe.userFCC.user.username }}</div>
+        <div class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</div>
+        <div class="my-rating"></div>
+        <script>$(".my-rating").starRating({
+    initialRating: {{ result_equipe.moyenne_note|floatformat }}/2,
+    starSize: 15,
+    disableAfterRate: false,
+    callback: function(currentRating, $el){
+        // make a server call here
+        //Prepare csrf token
+         var csrftoken = getCookie('csrftoken');
+        //Collect data from fields
+         var joueur = "{{ result_equipe.userFCC.idUserFCC }}";
+         var match = "{{ m }}";
+         var note = currentRating;
+         $.ajax({
+               url : window.location.href, // the endpoint,commonly same url
+               type : "POST", // http method
+               data : { csrfmiddlewaretoken : csrftoken,
+               joueur : joueur,
+               match : match,
+               note : note
+         }, // data sent with the post request
+
+         // handle a successful response
+         success : function(json) {
+         console.log(json); // another sanity check
+         //On success show the data posted to server as a message
+         $("#myModal").modal('hide');
+         $("#news").load("/fcc/news");
+         },
+
+         // handle a non-successful response
+         error : function(xhr,errmsg,err) {
+         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+         }
+         });
+        }
+        });
+    </script>
 {% endfor %}
 </ul>

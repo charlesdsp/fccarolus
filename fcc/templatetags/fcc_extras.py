@@ -28,4 +28,4 @@ def get_resultat_equipe(**kwargs):
     m = kwargs['m']
     match = Match.objects.get(pk=m)
     result_equipe = Resultat.objects.filter(match=match, equipe=equipe).order_by('-buts')
-    return {'result_equipe': result_equipe}
+    return {'result_equipe': result_equipe, 'm': m}

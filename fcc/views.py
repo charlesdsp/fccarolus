@@ -8,8 +8,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
+from django.db.models import Avg
 from django.http import HttpResponseRedirect, JsonResponse
-from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker
+from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker, NoteMatch
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm
 import operator
 
@@ -238,8 +239,34 @@ def majStat(userFCC, win, buts, session):
 
 def results(request):
     """Page de résultat d'un match."""
+    if request.method == "POST":
+        print("form passe")
+        if request.is_ajax():
+            print("ISAJAX")
+            # Always use get on request.POST. Correct way of querying a QueryDict.
+            j = request.POST.get('joueur')
+            print(j)
+            joueur = UserFCC.objects.get(pk=j)
+            u = request.user
+            userFCC = UserFCC.objects.get(user=u)
+            m = request.POST.get('match')
+            match = Match.objects.get(pk=m)
+            note = request.POST.get('note')
+            note_match = NoteMatch.objects.filter(userFCC=userFCC, joueur=joueur, match=match)
+            if not note_match:
+                print("Rien trouvé en base")
+                note_match = NoteMatch()
+            else:
+                note_match = note_match[0]
+            note_match.userFCC = userFCC
+            note_match.joueur = joueur
+            note_match.match = match
+            note_match.note = float(note) * 2
+            note_match.save()
+            majNoteJoueur(joueur, match)
     derniermatch = Match.objects.exclude(inscrits=0).order_by('-dateMatch')[0]
-    return render(request, 'fcc/results.html', {'match': derniermatch})
+    notes_match = NoteMatch.objects.filter(match=derniermatch)
+    return render(request, 'fcc/results.html', {'match': derniermatch, "notes_match": notes_match})
 
 
 def statsBySession(session):
@@ -270,6 +297,13 @@ def majClass(request):
         stats.save()
         i += 1
     return redirect('/fcc/stats')
+
+
+def majNoteJoueur(joueur, match):
+    """Recalcul de la note moyenne d'un joueur."""
+    result = Resultat.objects.filter(userFCC=joueur, match=match)[0]
+    result.moyenne_note = NoteMatch.objects.filter(joueur=joueur, match=match).aggregate(Avg('note'))['note__avg']
+    result.save()
 
 
 def majInscrits():
