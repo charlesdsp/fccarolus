@@ -6,4 +6,10 @@
         {% endthumbnail %}
         {{ compo_equipe.userFCC.user.username }}
 {% endfor %}
+{% for invite in liste_invite_abs %}
+    <li class="team"> {% thumbnail invite.photo "30x30" crop="80% top" as im %}
+            <img src="{{ im.url }}">
+        {% endthumbnail %}
+        {{ invite.user.username }}
+{% endfor %}
 </ul>

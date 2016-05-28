@@ -25,14 +25,12 @@ logging.getLogger('sorl.thumbnail').addHandler(handler)
 @login_required
 def home(request):
     """Page d'accueil."""
+    """Calcul de le compo du prochain match."""
     sessionActive = Session.objects.filter(ouverte=True)[0]
-    liste_inscrits = UserFCC.objects.filter(inscrit=1)
-    liste_absents = UserFCC.objects.filter(inscrit=3)
-    liste_en_attente = UserFCC.objects.filter(inscrit=0)
-    nb_inscrits = len(liste_inscrits)
-    nb_absents = len(liste_absents)
-    nb_en_attente = len(liste_en_attente)
-    prochainMatch = Match.objects.filter(ouverte=True)[0]
+    nb_inscrits = UserFCC.objects.filter(inscrit=1).count()
+    nb_absents = UserFCC.objects.filter(inscrit=3).count()
+    nb_en_attente = UserFCC.objects.filter(inscrit=0).count()
+    prochainMatch = Match.objects.filter(ouverte=1)[0]
     """Génère un formulaire de news."""
     u = request.user
     userFCC = UserFCC.objects.get(user=u)
@@ -101,23 +99,25 @@ def user(request, id_user=None):
 @login_required
 def compo(request):
     """Page de la compo du match."""
-    match = Match.objects.filter(ouverte=True)[0]
+    match = Match.objects.filter(ouverte=1)[0]
+    u = request.user
+    userFCC = UserFCC.objects.get(user=u)
     if request.method == "POST":
         joker_form = JokerForm(request.POST)
         if joker_form.is_valid():
             joker = Joker()
             joker.joker = joker_form.cleaned_data["joker"]
-            u = request.user
-            userFCC = UserFCC.objects.get(user=u)
             joker.userFCC = userFCC
             joker.match = match
             joker.save()
     sessionActive = Session.objects.filter(ouverte=True)[0]
     absents = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='3').order_by('userFCC__dtUpdate')
     en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0').order_by('userFCC__user__username')
+    liste_invite = UserFCC.objects.filter(titulaire='0', inscrit='1')
+    print("Invité ----" + str(liste_invite))
     liste_jokers = Joker.objects.filter(match=match)
     joker_form = JokerForm()
-    return render(request, 'fcc/compo.html', {'absents': absents, 'en_attente': en_attente, 'liste_jokers': liste_jokers, 'joker_form': joker_form})
+    return render(request, 'fcc/compo.html', {'userFCC': userFCC, 'absents': absents, 'en_attente': en_attente, 'liste_jokers': liste_jokers, 'joker_form': joker_form, 'liste_invite': liste_invite})
 
 
 def loginFCC(request):
@@ -165,7 +165,7 @@ def inscription(request, dispo):
 
 def addResultats(request):
     """Ajout d'un résultat à un match."""
-    idMatch = Match.objects.filter(ouverte=True)[0]
+    idMatch = Match.objects.filter(ouverte=1)[0]
     error = False
     ResultatTeamAFormSet = modelformset_factory(Resultat, ResultatTeamAForm, extra=5)
     ResultatTeamBFormSet = modelformset_factory(Resultat, ResultatTeamBForm, extra=5)
@@ -179,11 +179,15 @@ def addResultats(request):
             resultat_match.save()
             """Ouverture du match suivant."""
             ancienneJournee = Match.objects.get(id_match=idMatch.id_match)
-            ancienneJournee.ouverte = False
+            ancienneJournee.ouverte = 2
             ancienneJournee.save()
-            prochaineJournee = Match.objects.filter(ouverte=False, inscrits=0, dateMatch__gt=ancienneJournee.dateMatch).order_by('dateMatch')[0]
-            prochaineJournee.ouverte = True
-            prochaineJournee.save()
+            try:
+                prochaineJournee = Match.objects.filter(ouverte=0, inscrits=0, dateMatch__gt=ancienneJournee.dateMatch).order_by('dateMatch')[0]
+            except:
+                print('Plus de match prévus')
+            else:
+                prochaineJournee.ouverte = 1
+                prochaineJournee.save()
             majInscrits()
             """Calcul de l"équipe gagnante."""
             winA = 2
@@ -264,9 +268,44 @@ def results(request):
             note_match.note = float(note) * 2
             note_match.save()
             majNoteJoueur(joueur, match)
-    derniermatch = Match.objects.exclude(inscrits=0).order_by('-dateMatch')[0]
+    derniermatch = Match.objects.filter(ouverte=2).order_by('-dateMatch')[0]
     notes_match = NoteMatch.objects.filter(match=derniermatch)
     return render(request, 'fcc/results.html', {'match': derniermatch, "notes_match": notes_match})
+
+
+def session(request, session=None):
+    """Page des sessions."""
+    s = session
+    if s is None:
+        session = Session.objects.filter(ouverte=True)[0]
+    else:
+        session = Session.objects.get(pk=s)
+    liste_match = Match.objects.filter(session=session).order_by('dateMatch')
+    win_FCC = 0
+    win_SAC = 0
+    draw = 0
+    for match in liste_match:
+        if match.ouverte == 2:
+            if match.scoreA > match.scoreB:
+                win_FCC = win_FCC + 1
+            elif match.scoreA < match.scoreB:
+                win_SAC = win_SAC + 1
+            else:
+                draw = draw + 1
+    liste_old_session = Session.objects.filter(ouverte=False)
+    for old_session in liste_old_session:
+        old_session.debut = Match.objects.filter(session=old_session)[0].dateMatch
+        old_session.leader = Stat.objects.filter(session=old_session).order_by('classement')[0]
+    leaders = Stat.objects.filter(session=session).order_by('classement')[:2]
+    return render(request, 'fcc/session.html', {
+        'session': session,
+        'win_FCC': win_FCC,
+        'win_SAC': win_SAC,
+        'draw': draw,
+        'liste_match': liste_match,
+        'liste_old_session': liste_old_session,
+        'leaders': leaders
+        })
 
 
 def statsBySession(session):
@@ -280,6 +319,11 @@ def stats(request):
     """Page des statisiques."""
     session = Session.objects.filter(ouverte=True)[0]
     stats = statsBySession(session.id_session)
+    for stat in stats:
+        stat.note = 0
+        list_match = Match.objects.filter(session=session)
+        note = Resultat.objects.filter(userFCC=stat.userFCC, match__in=list_match).aggregate(Avg('moyenne_note'))['moyenne_note__avg']
+        stat.note = note
     return render(request, 'fcc/stats.html', {'stats': stats, 'session': session})
 
 
@@ -331,5 +375,4 @@ def awards(request, year=None):
     liste_awards = Award.objects.filter(annee=annee).order_by('nom_award')
     liste_vainqueurs = AwardVainqueur.objects.filter(award__annee=annee).order_by('award__nom_award')
     year_form = YearAwardsForm(initial={'year': annee})
-    print(year_form)
     return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form})

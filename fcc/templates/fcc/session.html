@@ -1,0 +1,139 @@
+{% extends 'fcc/base.html' %}
+{% block title %}Session{% endblock title %}
+{% block id %}5{% endblock id %}
+{% load fcc_extras %}
+{% load thumbnail %}
+{% block content %}
+
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Session {{ session.id_session }} : {{ liste_match|length }} matchs dont {{ win_FCC|add:win_SAC|add:draw }} déjà joués</p>
+        </div>
+    </div>
+    <div class="container">
+        <div>
+            <h3 style="text-align: center;">FCC {{ win_FCC }} - {{ win_SAC }} SAC</h3>
+        </div>
+        <div>
+            <h3>Leaders</h3>
+            <span class="ajout-news">
+                <a type="button" class="btn btn-primary btn-sm"  href="/fcc/stats">Classement complet</a>
+            </span>
+            <ul class="list-unstyled">
+            {% for leader in leaders %}
+            <li class="team"> {% thumbnail leader.userFCC.photo "30x30" crop="80% top" as im %}
+                    <img src="{{ im.url }}">
+                {% endthumbnail %}
+                {{ leader.userFCC.user.username }} {{ leader.points }} pts {{ leader.victoire }} Victoires {{ leader.buts }} <i class="fa fa-futbol-o" aria-hidden="true"></i>
+            {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h3>Liste des matchs</h3>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Score</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for match in liste_match %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ match.dateMatch }}</td>
+                        <td>
+                            {% if match.ouverte == 2 %}
+                                FCC {{ match.scoreA }} - SAC {{ match.scoreB }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if match.ouverte == 2 %}
+                                <a data-toggle="modal" data-target="#myModal-{{ match.id_match }}"><i class="fa fa-th-list" aria-hidden="true"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h3>Anciennes sessions</h3>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Matchs</th>
+                        <th>Début</th>
+                        <th>Vainqueur</th>
+                        <th>Leader</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for old_session in liste_old_session %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ old_session.nombreMatchs }}</td>
+                        <td>{{ old_session.debut }}</td>
+                        <td>{{ old_session.vainqueur }}</td>
+                        <td>{{ old_session.leader.userFCC.user.username }}</td>
+                        <td><a href="/fcc/session/{{ old_session.id_session }}"<i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% for match in liste_match %}
+            {% if match.ouverte == 2 %}
+                <div id="myModal-{{ match.id_match }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Résultat du match</h4>
+              </div>
+              <div class="modal-body">
+                      <div class="row">
+                          <div class="col-sm-6">
+                              <div class="panel panel-success">
+                                  <div class="panel-heading">
+                                      <h3 class="panel-title">FC Carolus {{ match.scoreA }}</h3>
+                                  </div>
+                                  <div class="panel-body">
+                                      {% get_resultat_equipe m=match.id_match equipe="A" %}
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-sm-6">
+                              <div class="panel panel-success">
+                                  <div class="panel-heading">
+                                      <h3 class="panel-title">SAC {{ match.scoreB }}</h3>
+                                  </div>
+                                  <div class="panel-body">
+                                      {% get_resultat_equipe m=match.id_match equipe="B" %}
+                                  </div>
+                              </div>
+                          </div>
+              </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Retour</button>
+              </div>
+            </div>
+        </div>
+      </div>
+            {% endif %}
+            {% endfor %}
+
+  </div>
+{% endblock content %}

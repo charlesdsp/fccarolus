@@ -9,8 +9,12 @@
         <div class="container">
             <p>{{ request.user.username }}, indique ta disponibilité pour le prochain match</p>
             <p>
-                <a class="btn btn-sm btn-primary" href="/fcc/inscription/1" role ="button">Dispo</a>
-                <a class="btn btn-sm btn-danger" href="/fcc/inscription/3" role ="button">Absent</a>
+                {% if userFCC.inscrit != 1 %}
+                    <a class="btn btn-sm btn-primary" href="/fcc/inscription/1" role ="button">Dispo</a>
+                {% endif %}
+                {% if userFCC.inscrit != 3 %}
+                    <a class="btn btn-sm btn-danger" href="/fcc/inscription/3" role ="button">Absent</a>
+                {% endif %}
             </p>
         </div>
     </div>
@@ -38,7 +42,7 @@
                 </div>
             </div>
         </div>
-        {% if liste_jokers %}
+        {% if liste_jokers or liste_invite %}
         <div class="row">
             <div class="col-sm-4">
                 <div class="panel panel-joker">
@@ -47,6 +51,13 @@
                     </div>
                     <div class="panel-body">
                         <ul class="list-unstyled">
+                        {% load thumbnail %}
+                        {% for invite in liste_invite %}
+                            <li class="team"> {% thumbnail invite.photo "30x30" crop="80% top" as im %}
+                                    <img src="{{ im.url }}">
+                                {% endthumbnail %}
+                                {{ invite.user.username }}
+                        {% endfor %}
                         {% for liste_jokers in liste_jokers %}
                             <li class="team"> {{ liste_jokers.joker }} (par {{ liste_jokers.userFCC.user.username }})
                         {% endfor %}

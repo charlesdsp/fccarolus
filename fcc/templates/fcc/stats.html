@@ -23,6 +23,7 @@
                         <th>N</th>
                         <th>D</th>
                         <th><i class="fa fa-futbol-o" aria-hidden="true"></i></th>
+                        <th><i class="fa fa-star" aria-hidden="true"></i></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,6 +39,7 @@
                         <td>{{ stat.nul }}</td>
                         <td>{{ stat.defaite }}</td>
                         <td>{{ stat.buts }}</td>
+                        <td><span class="moyenne">{{ stat.note|default:"" }}</span></td>
                     </tr>
                 {% endfor %}
                 </tbody>

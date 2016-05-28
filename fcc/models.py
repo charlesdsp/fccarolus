@@ -32,7 +32,7 @@ class Match(models.Model):
 
     id_match = models.AutoField(primary_key=True)
     dateMatch = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    ouverte = models.BooleanField(default=False)
+    ouverte = models.IntegerField(default=0)
     inscrits = models.IntegerField(default=0)
     session = models.ForeignKey('Session')
     scoreA = models.IntegerField(default=0)
@@ -61,6 +61,7 @@ class Session(models.Model):
     id_session = models.AutoField(primary_key=True)
     nombreMatchs = models.IntegerField(default=0)
     ouverte = models.BooleanField(default=False)
+    vainqueur = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         """Description."""
