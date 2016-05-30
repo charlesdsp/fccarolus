@@ -35,8 +35,8 @@ class Match(models.Model):
     ouverte = models.IntegerField(default=0)
     inscrits = models.IntegerField(default=0)
     session = models.ForeignKey('Session')
-    scoreA = models.IntegerField(default=0)
-    scoreB = models.IntegerField(default=0)
+    scoreA = models.IntegerField(null=True, blank=True)
+    scoreB = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         """Description."""
@@ -76,7 +76,7 @@ class Resultat(models.Model):
     equipe = models.CharField(max_length=1, default="A")
     buts = models.IntegerField(default=0)
     somme_notes = models.IntegerField(default=0)
-    moyenne_note = models.DecimalField(default=0, max_digits=3, decimal_places=2)
+    moyenne_note = models.DecimalField(default=0, max_digits=3, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         """Description."""

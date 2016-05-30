@@ -8,10 +8,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
-from django.db.models import Avg
+from django.db.models import Avg, Sum
 from django.http import HttpResponseRedirect, JsonResponse
 from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker, NoteMatch
-from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm
+from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
 import operator
 
 import logging
@@ -286,6 +286,7 @@ def session(request, session=None):
     draw = 0
     for match in liste_match:
         if match.ouverte == 2:
+            print(match.id_match)
             if match.scoreA > match.scoreB:
                 win_FCC = win_FCC + 1
             elif match.scoreA < match.scoreB:
@@ -295,7 +296,11 @@ def session(request, session=None):
     liste_old_session = Session.objects.filter(ouverte=False)
     for old_session in liste_old_session:
         old_session.debut = Match.objects.filter(session=old_session)[0].dateMatch
-        old_session.leader = Stat.objects.filter(session=old_session).order_by('classement')[0]
+        try:
+            old_session.leader = Stat.objects.filter(session=old_session).order_by('classement')[0]
+        except:
+            print("Pas de leader")
+            old_session.leader = None
     leaders = Stat.objects.filter(session=session).order_by('classement')[:2]
     return render(request, 'fcc/session.html', {
         'session': session,
@@ -315,16 +320,39 @@ def statsBySession(session):
     return statsJoueursBySession
 
 
-def stats(request):
+def stats(request, s=None):
     """Page des statisiques."""
-    session = Session.objects.filter(ouverte=True)[0]
+    session = s
+    if s is None:
+        session = Session.objects.filter(ouverte=True)[0]
+    if request.method == "POST":
+        session_form = SessionForm(data=request.POST)
+
+        if session_form.is_valid():
+            session_envoyee = session_form.cleaned_data['s']
+            if session_envoyee == 'Global':
+                stats_globales = Stat.objects.values('userFCC').annotate(
+                    points=Sum('points'),
+                    victoire=Sum('victoire'),
+                    defaite=Sum('defaite'),
+                    nul=Sum('nul'),
+                    buts=Sum('buts')
+                    )
+                for stat in stats_globales:
+                    stat['note'] = 0
+                    note = Resultat.objects.filter(userFCC=stat['userFCC']).aggregate(Avg('moyenne_note'))['moyenne_note__avg']
+                    stat['note'] = note
+                return render(request, 'fcc/stats.html', {'stats': stats_globales, 'session': session})
+            else:
+                session = Session.objects.get(pk=session_envoyee)
     stats = statsBySession(session.id_session)
     for stat in stats:
         stat.note = 0
         list_match = Match.objects.filter(session=session)
         note = Resultat.objects.filter(userFCC=stat.userFCC, match__in=list_match).aggregate(Avg('moyenne_note'))['moyenne_note__avg']
         stat.note = note
-    return render(request, 'fcc/stats.html', {'stats': stats, 'session': session})
+    session_form = SessionForm(initial={'s': session.id_session})
+    return render(request, 'fcc/stats.html', {'stats': stats, 'session': session, 'session_form': session_form})
 
 
 def majClass(request):
@@ -363,7 +391,7 @@ def user_logout(request):
 
 
 def awards(request, year=None):
-    """Déconnexion du site."""
+    """Awards."""
     annee = year
     if year is None:
         annee = Award.objects.all().order_by('-annee')[0].annee
@@ -372,7 +400,19 @@ def awards(request, year=None):
 
         if year_form.is_valid():
             annee = year_form.cleaned_data['year']
-    liste_awards = Award.objects.filter(annee=annee).order_by('nom_award')
+    liste_awards = Award.objects.filter(annee=annee).order_by('id_award')
     liste_vainqueurs = AwardVainqueur.objects.filter(award__annee=annee).order_by('award__nom_award')
     year_form = YearAwardsForm(initial={'year': annee})
     return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form})
+
+
+def majNoteInit():
+    """Recalcul de toutes les notes."""
+    liste_match = Match.objects.all()
+    for match in liste_match:
+        liste_resultats = Resultat.objects.filter(match=match)
+        for result in liste_resultats:
+            result.moyenne_note = NoteMatch.objects.filter(joueur=result.userFCC, match=result.match).aggregate(Avg('note'))['note__avg']
+            if result.moyenne_note is None:
+                result.moyenne = 0.00
+            result.save()

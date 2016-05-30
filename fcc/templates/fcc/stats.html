@@ -7,7 +7,14 @@
 
 <div class="well well-sm">
         <div class="container">
-            <p>Statistiques de la session {{ session.id_session }}</p>
+            <p>
+                <form method="post" action="">
+                    Statistiques de la session
+                    {% csrf_token %}
+                    {{ session_form.s }}
+                    <input class="btn btn-primary btn-sm" type="submit" name="submit" value="Go" />
+                </form>
+            </p>
         </div>
     </div>
     <div class="container">
@@ -39,7 +46,7 @@
                         <td>{{ stat.nul }}</td>
                         <td>{{ stat.defaite }}</td>
                         <td>{{ stat.buts }}</td>
-                        <td><span class="moyenne">{{ stat.note|default:"" }}</span></td>
+                        <td><span class="moyenne">{{ stat.note|floatformat:2|default:"" }}</span></td>
                     </tr>
                 {% endfor %}
                 </tbody>

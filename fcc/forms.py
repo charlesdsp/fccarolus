@@ -5,7 +5,7 @@ Connexion, Resultats etc.
 """
 
 from django import forms
-from fcc.models import Resultat, Match, UserFCC, News, Joker
+from fcc.models import Resultat, Match, UserFCC, News, Joker, Session
 from django.contrib.auth.models import User
 
 
@@ -21,6 +21,26 @@ class YearAwardsForm(forms.Form):
 
     YEAR_AWARDS = [('2014', '2014'), ('2015', '2015'), ('2016', '2016'), ]
     year = forms.ChoiceField(choices=YEAR_AWARDS)
+
+
+class SessionForm(forms.Form):
+    """Sélection de l'année des awards."""
+
+    LISTE_SESSION = [
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10'),
+        ('11', '11'),
+        ('12', '12'),
+         ]
+    s = forms.ChoiceField(choices=LISTE_SESSION)
 
 
 class JokerForm(forms.Form):
