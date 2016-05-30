@@ -86,6 +86,18 @@ DATABASES = {
         'PORT': '',
     }
 }
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'fccarolus',
+        'USER': 'fccarolus',
+        'PASSWORD': 'yugagflhv6',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+"""
 
 
 # Password validation
