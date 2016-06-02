@@ -60,6 +60,9 @@
                         {% endfor %}
                         {% for liste_jokers in liste_jokers %}
                             <li class="team"> {{ liste_jokers.joker }} (par {{ liste_jokers.userFCC.user.username }})
+                                {% if  liste_jokers.userFCC.user == request.user %}
+                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                {% endif %}
                         {% endfor %}
                         </ul>
                     </div>

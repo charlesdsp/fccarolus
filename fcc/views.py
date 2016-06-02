@@ -27,10 +27,12 @@ def home(request):
     """Page d'accueil."""
     """Calcul de le compo du prochain match."""
     sessionActive = Session.objects.filter(ouverte=True)[0]
-    nb_inscrits = UserFCC.objects.filter(inscrit=1).count()
-    nb_absents = UserFCC.objects.filter(inscrit=3).count()
-    nb_en_attente = UserFCC.objects.filter(inscrit=0).count()
     prochainMatch = Match.objects.filter(ouverte=1)[0]
+    nb_inscrits = UserFCC.objects.filter(inscrit=1).count()
+    nb_joker = Joker.objects.filter(match=prochainMatch).count()
+    nb_inscrits = nb_inscrits + nb_joker
+    nb_absents = UserFCC.objects.filter(inscrit=3).count()
+    nb_en_attente = UserFCC.objects.filter(inscrit=0, titulaire=True).count()
     """Génère un formulaire de news."""
     u = request.user
     userFCC = UserFCC.objects.get(user=u)
@@ -78,6 +80,8 @@ def user(request, id_user=None):
             u = request.user
             uFCC = UserFCC.objects.get(user=u)
             u.email = user_form.cleaned_data['email']
+            new_pass = user_form.cleaned_data['password']
+            u.set_password(new_pass)
             u.save()
             uFCC.tel = userFCC_form.cleaned_data['tel']
             if 'photo' in request.FILES:

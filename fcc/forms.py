@@ -88,12 +88,13 @@ class ResultatMatchForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     """Edition du profil."""
 
-    email = forms.EmailField(label="email")
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(label="Mot de passe")
 
     class Meta:
         # Provide an association between the ModelForm and a model
             model = User
-            fields = ('email',)
+            fields = ('email', 'password')
 
 
 class UserFCCForm(forms.ModelForm):
@@ -112,7 +113,7 @@ class NewsForm(forms.ModelForm):
     """Ajout d'une news sur la page d'accueil."""
 
     titre = forms.CharField(max_length=100)
-    message = forms.Textarea()
+    message = forms.Textarea(attrs={'rows': 10, 'cols': 30})
 
     class Meta:
         # Provide an association between the ModelForm and a model

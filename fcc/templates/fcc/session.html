@@ -13,7 +13,15 @@
     </div>
     <div class="container">
         <div>
-            <h3 style="text-align: center;">FCC {{ win_FCC }} - {{ win_SAC }} SAC</h3>
+            <h3 style="text-align: center;">
+                {% with STATIC_URL|add:"fcc.jpg" as path %}
+                    {% thumbnail path "50x50" crop="80% top" as im %}
+                    <img src="{{ im.url }}">
+                    {% endthumbnail %}
+                {% endwith %}
+                FCC {{ win_FCC }} - {{ win_SAC }} SAC{% thumbnail path "50x50" crop="80% top" as im %}
+                        <img src="{{ im.url }}">
+                    {% endthumbnail %}</h3>
         </div>
         <div>
             <h3>Leaders</h3>
