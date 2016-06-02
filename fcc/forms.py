@@ -39,6 +39,7 @@ class SessionForm(forms.Form):
         ('10', '10'),
         ('11', '11'),
         ('12', '12'),
+        ('13', '13'),
          ]
     s = forms.ChoiceField(choices=LISTE_SESSION)
 

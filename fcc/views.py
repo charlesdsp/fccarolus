@@ -8,9 +8,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Avg, Sum
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker, NoteMatch
+from django.contrib.auth.models import User
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
 import operator
 
@@ -350,6 +353,9 @@ def stats(request, s=None):
             else:
                 session = Session.objects.get(pk=session_envoyee)
     stats = statsBySession(session.id_session)
+    if not stats:
+        session_precedente = session.id_session - 1
+        stats = statsBySession(session_precedente)
     for stat in stats:
         stat.note = 0
         list_match = Match.objects.filter(session=session)
@@ -420,3 +426,32 @@ def majNoteInit():
             if result.moyenne_note is None:
                 result.moyenne = 0.00
             result.save()
+
+
+def relance(request):
+    """Relance pour l'inscription au match."""
+    prochainMatch = Match.objects.filter(ouverte=1)[0]
+    nb_inscrits = UserFCC.objects.filter(inscrit=1).count()
+    nb_joker = Joker.objects.filter(match=prochainMatch).count()
+    nb_inscrits = nb_inscrits + nb_joker
+    nb_absents = UserFCC.objects.filter(inscrit=3).count()
+    nb_en_attente = UserFCC.objects.filter(inscrit=0, titulaire=True).count()
+    liste_mail = User.objects.filter(email__contains='@').values_list('email', flat=True)
+    print(type(liste_mail))
+    sujet = 'Relance : ' + str(nb_inscrits) + ' inscrits | ' + str(nb_absents) + ' absents | ' + str(nb_en_attente) + ' en attente'
+    html = get_template('fcc/relance.html')
+
+    d = (
+            {
+                'prochainMatch': prochainMatch,
+                'nbInscrits': nb_inscrits,
+                'nbAbsents': nb_absents,
+                'nbAttente': nb_en_attente
+            }
+        )
+    message_text = html.render(d)
+    message_html = html.render(d)
+    msg = EmailMultiAlternatives(sujet, message_text, 'fccarolus@fccarolus.com', liste_mail)
+    msg.attach_alternative(message_html, "text/html")
+    msg.send()
+    return redirect('/fcc/home')

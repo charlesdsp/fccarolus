@@ -76,7 +76,8 @@ WSGI_APPLICATION = 'fccarolus.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASES = {
+if DEBUG:
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'fccarolus',
@@ -84,20 +85,28 @@ DATABASES = {
         'PASSWORD': 'yugagflhv6',
         'HOST': 'localhost',
         'PORT': '',
+        }
     }
-}
-""" Config pour la prod.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+else:
+    """ Config pour la prod."""
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
-"""
 
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+
+
+# Config email
+EMAIL_HOST = 'smtp.fccarolus.com'
+EMAIL_HOST_USER = 'fccarolus@fccarolus.com'
+EMAIL_HOST_PASSWORD = 'yugagflhv6'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 
 LOGIN_REDIRECT_URL = 'home'
@@ -123,6 +132,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '/fccarolus/fccarolus/fcc/media/')
+if DEBUG:
+    MEDIA_ROOT = os.path.join(BASE_DIR, '/fccarolus/fccarolus/fcc/media/')
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, '/home/fccarolus/fccarolus/fcc/media/')
 
 MEDIA_URL = '/fcc/media/'

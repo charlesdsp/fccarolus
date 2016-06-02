@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^session/(?P<session>\d+)$', views.session),
     url(r'^session$', views.session),
     url(r'^news$', views.news, name='news'),
+    url(r'^relance$', views.relance),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
