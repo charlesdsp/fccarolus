@@ -12,9 +12,11 @@ from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Avg, Sum
 from django.http import HttpResponseRedirect
-from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur, News, Joker, NoteMatch
+from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur,\
+    News, Joker, NoteMatch
 from django.contrib.auth.models import User
-from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm, UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
+from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm,\
+    UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
 import operator
 
 import logging
@@ -98,7 +100,11 @@ def user(request, id_user=None):
         id_user = UserFCC.objects.get(user=u)
         user_form = UserForm(initial={'email': id_user.user.email})
         userFCC_form = UserFCCForm(initial={'tel': id_user.tel, 'photo': id_user.photo})
-        return render(request, 'fcc/user.html', {'user': id_user, 'user_form': user_form, 'userFCC_form': userFCC_form})
+        return render(request, 'fcc/user.html', {
+            'user': id_user,
+            'user_form': user_form,
+            'userFCC_form': userFCC_form
+            })
     user = get_object_or_404(UserFCC, idUserFCC=id_user)
     return render(request, 'fcc/user.html', {'user': user})
 
@@ -118,13 +124,22 @@ def compo(request):
             joker.match = match
             joker.save()
     sessionActive = Session.objects.filter(ouverte=True)[0]
-    absents = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='3').order_by('userFCC__dtUpdate')
-    en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0').order_by('userFCC__user__username')
+    absents = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='3')\
+        .order_by('userFCC__dtUpdate')
+    en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0')\
+        .order_by('userFCC__user__username')
     liste_invite = UserFCC.objects.filter(titulaire='0', inscrit='1')
     print("Invité ----" + str(liste_invite))
     liste_jokers = Joker.objects.filter(match=match)
     joker_form = JokerForm()
-    return render(request, 'fcc/compo.html', {'userFCC': userFCC, 'absents': absents, 'en_attente': en_attente, 'liste_jokers': liste_jokers, 'joker_form': joker_form, 'liste_invite': liste_invite})
+    return render(request, 'fcc/compo.html', {
+        'userFCC': userFCC,
+        'absents': absents,
+        'en_attente': en_attente,
+        'liste_jokers': liste_jokers,
+        'joker_form': joker_form,
+        'liste_invite': liste_invite
+        })
 
 
 def loginFCC(request):
@@ -189,7 +204,8 @@ def addResultats(request):
             ancienneJournee.ouverte = 2
             ancienneJournee.save()
             try:
-                prochaineJournee = Match.objects.filter(ouverte=0, inscrits=0, dateMatch__gt=ancienneJournee.dateMatch).order_by('dateMatch')[0]
+                prochaineJournee = Match.objects.filter(ouverte=0, inscrits=0, dateMatch__gt=ancienneJournee.dateMatch)\
+                    .order_by('dateMatch')[0]
             except:
                 print('Plus de match prévus')
             else:
@@ -359,7 +375,8 @@ def stats(request, s=None):
     for stat in stats:
         stat.note = 0
         list_match = Match.objects.filter(session=session)
-        note = Resultat.objects.filter(userFCC=stat.userFCC, match__in=list_match).aggregate(Avg('moyenne_note'))['moyenne_note__avg']
+        note = Resultat.objects.filter(userFCC=stat.userFCC, match__in=list_match)\
+            .aggregate(Avg('moyenne_note'))['moyenne_note__avg']
         stat.note = note
     session_form = SessionForm(initial={'s': session.id_session})
     return render(request, 'fcc/stats.html', {'stats': stats, 'session': session, 'session_form': session_form})
@@ -413,7 +430,9 @@ def awards(request, year=None):
     liste_awards = Award.objects.filter(annee=annee).order_by('id_award')
     liste_vainqueurs = AwardVainqueur.objects.filter(award__annee=annee).order_by('award__nom_award')
     year_form = YearAwardsForm(initial={'year': annee})
-    return render(request, 'fcc/awards.html', {'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form})
+    return render(request, 'fcc/awards.html', {
+        'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form
+        })
 
 
 def majNoteInit():
@@ -438,7 +457,9 @@ def relance(request):
     nb_en_attente = UserFCC.objects.filter(inscrit=0, titulaire=True).count()
     liste_mail = User.objects.filter(email__contains='@').values_list('email', flat=True)
     print(type(liste_mail))
-    sujet = 'Relance : ' + str(nb_inscrits) + ' inscrits | ' + str(nb_absents) + ' absents | ' + str(nb_en_attente) + ' en attente'
+    sujet = 'Relance : ' + str(nb_inscrits) + ' inscrits | ' \
+        + str(nb_absents) + ' absents | ' \
+        + str(nb_en_attente) + ' en attente'
     html = get_template('fcc/relance.html')
 
     d = (

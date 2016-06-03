@@ -5,7 +5,7 @@ Connexion, Resultats etc.
 """
 
 from django import forms
-from fcc.models import Resultat, Match, UserFCC, News, Joker, Session
+from fcc.models import Resultat, Match, UserFCC, News, Joker, Session, Award
 from django.contrib.auth.models import User
 
 
@@ -18,30 +18,23 @@ class ConnexionForm(forms.Form):
 
 class YearAwardsForm(forms.Form):
     """Sélection de l'année des awards."""
-
-    YEAR_AWARDS = [('2014', '2014'), ('2015', '2015'), ('2016', '2016'), ]
-    year = forms.ChoiceField(choices=YEAR_AWARDS)
+    liste_awards = Award.objects.values('annee').order_by('annee')
+    liste_num_year = []
+    annee = []
+    for award in liste_awards:
+        if award['annee'] not in annee:
+            annee.append(award['annee'])
+            liste_num_year.append((award['annee'], (award['annee'])))
+    year = forms.ChoiceField(choices=liste_num_year)
 
 
 class SessionForm(forms.Form):
     """Sélection de l'année des awards."""
-
-    LISTE_SESSION = [
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5', '5'),
-        ('6', '6'),
-        ('7', '7'),
-        ('8', '8'),
-        ('9', '9'),
-        ('10', '10'),
-        ('11', '11'),
-        ('12', '12'),
-        ('13', '13'),
-         ]
-    s = forms.ChoiceField(choices=LISTE_SESSION)
+    liste_session = Session.objects.all()
+    liste_num_session = []
+    for session in liste_session:
+        liste_num_session.append((session.id_session, session.id_session))
+    s = forms.ChoiceField(choices=liste_num_session)
 
 
 class JokerForm(forms.Form):

@@ -1,10 +1,6 @@
 """Admin Django."""
 
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib.auth.models import User
-
 from .models import UserFCC, Match, Session, Resultat, Stat, Compo, Award, AwardVainqueur, News
 
 admin.site.register(UserFCC)
