@@ -23,8 +23,9 @@ SECRET_KEY = 'sn53)7s4s*649#^)!5s6%=6%=r8yjq_u+)26gxw+%2$#-4env&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+PROD = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
@@ -76,7 +77,7 @@ WSGI_APPLICATION = 'fccarolus.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-if DEBUG:
+if not PROD:
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -132,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-if DEBUG:
+if not PROD:
     MEDIA_ROOT = os.path.join(BASE_DIR, '/fccarolus/fccarolus/fcc/media/')
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, '/home/fccarolus/fccarolus/fcc/media/')
