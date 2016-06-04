@@ -34,6 +34,7 @@ class SessionForm(forms.Form):
     liste_num_session = []
     for session in liste_session:
         liste_num_session.append((session.id_session, session.id_session))
+    liste_num_session.append(('Global', ('Global')))
     s = forms.ChoiceField(choices=liste_num_session)
 
 

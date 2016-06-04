@@ -354,18 +354,38 @@ def stats(request, s=None):
         if session_form.is_valid():
             session_envoyee = session_form.cleaned_data['s']
             if session_envoyee == 'Global':
+                liste_user_stat =[]
                 stats_globales = Stat.objects.values('userFCC').annotate(
                     points=Sum('points'),
                     victoire=Sum('victoire'),
                     defaite=Sum('defaite'),
                     nul=Sum('nul'),
                     buts=Sum('buts')
-                    )
+                    ).order_by('-points')
                 for stat in stats_globales:
                     stat['note'] = 0
                     note = Resultat.objects.filter(userFCC=stat['userFCC']).aggregate(Avg('moyenne_note'))['moyenne_note__avg']
                     stat['note'] = note
-                return render(request, 'fcc/stats.html', {'stats': stats_globales, 'session': session})
+                    c = 0
+                for user in stats_globales:
+                    user_stat = Stat()
+                    user_stat.userFCC = UserFCC.objects.get(pk=user['userFCC'])
+                    print(user['userFCC'])
+                    user_stat.points = user['points']
+                    user_stat.victoire = user['victoire']
+                    user_stat.nul = user['nul']
+                    user_stat.defaite = user['defaite']
+                    user_stat.nb_matchs = user['victoire'] + user['defaite'] + user['nul']
+                    moy = 0
+                    if user_stat.points > 0 and user_stat.nb_matchs > 0:
+                        moy = user_stat.points / user_stat.nb_matchs
+                    user_stat.moyenne = round(moy, 1)
+                    user_stat.buts = user['buts']
+                    user_stat.note = user['note']
+                    c += 1
+                    user_stat.classement = c
+                    liste_user_stat.append(user_stat)
+                return render(request, 'fcc/stats.html', {'stats': liste_user_stat, 'session': session, 'session_form': session_form})
             else:
                 session = Session.objects.get(pk=session_envoyee)
     stats = statsBySession(session.id_session)

@@ -19,18 +19,18 @@
     </div>
     <div class="container">
         <div class="row">
-            <table class="table table-hover">
+            <table id="dataTableClassement" class="table table-hover">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Joueur</th>
-                        <th>Pts</th>
-                        <th>Matchs</th>
-                        <th>V</th>
-                        <th>N</th>
-                        <th>D</th>
-                        <th><i class="fa fa-futbol-o" aria-hidden="true"></i></th>
-                        <th><i class="fa fa-star" aria-hidden="true"></i></th>
+                        <th class="sorting">#</th>
+                        <th class="sorting">Joueur</th>
+                        <th class="sorting">Pts</th>
+                        <th class="sorting">Matchs</th>
+                        <th class="sorting">V</th>
+                        <th class="sorting">N</th>
+                        <th class="sorting">D</th>
+                        <th class="sorting"><i class="fa fa-futbol-o" aria-hidden="true"></i></th>
+                        <th class="sorting"><i class="fa fa-star" aria-hidden="true"></i></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,4 +53,12 @@
             </table>
         </div>
 </div>
+<script>
+$(document).ready(function() {
+  $('#dataTableClassement').dataTable( {
+      "paging": false,
+      "searching": false
+  });
+});
+</script>
 {% endblock content %}

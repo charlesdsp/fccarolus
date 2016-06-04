@@ -23,7 +23,7 @@ SECRET_KEY = 'sn53)7s4s*649#^)!5s6%=6%=r8yjq_u+)26gxw+%2$#-4env&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PROD = True
+PROD = False
 
 ALLOWED_HOSTS = ['']
 
