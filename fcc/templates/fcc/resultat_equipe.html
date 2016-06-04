@@ -7,8 +7,11 @@
         {{ result_equipe.userFCC.user.username }}</div>
         <div class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</div>
         <div class="my-rating"></div>
-        <script>$(".my-rating").starRating({
-    initialRating: {{ result_equipe.moyenne_note|floatformat }}/2,
+        <script>
+        var inita = {{ result_equipe.moyenne_note|floatformat:"f" }};
+        var init = inita / 2;
+        $(".my-rating").starRating({
+    initialRating: init,
     starSize: 15,
     disableAfterRate: false,
     callback: function(currentRating, $el){
