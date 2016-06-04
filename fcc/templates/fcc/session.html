@@ -19,9 +19,13 @@
                     <img src="{{ im.url }}">
                     {% endthumbnail %}
                 {% endwith %}
-                FCC {{ win_FCC }} - {{ win_SAC }} SAC{% thumbnail path "50x50" crop="80% top" as im %}
+                FCC {{ win_FCC }} - {{ win_SAC }} SAC
+                {% with STATIC_URL|add:"sac.jpg" as path %}
+                    {% thumbnail path "50x50" crop="80% top" as im %}
                         <img src="{{ im.url }}">
-                    {% endthumbnail %}</h3>
+                    {% endthumbnail %}
+                {% endwith %}
+                </h3>
         </div>
         <div>
             <h3>Leaders</h3>
