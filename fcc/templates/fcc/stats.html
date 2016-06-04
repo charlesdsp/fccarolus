@@ -23,9 +23,10 @@
                 <thead>
                     <tr>
                         <th class="sorting">#</th>
-                        <th class="sorting">Joueur</th>
+                        <th class="sorting">Nom</th>
                         <th class="sorting">Pts</th>
-                        <th class="sorting">Matchs</th>
+                        <th class="sorting">M</th>
+                        <th class="sorting">P/M</th>
                         <th class="sorting">V</th>
                         <th class="sorting">N</th>
                         <th class="sorting">D</th>
@@ -41,7 +42,8 @@
                                 <img src="{{ im.url }}">
                             {% endthumbnail %}{{ stat.userFCC.user.username }}</td>
                         <td>{{ stat.points }}</td>
-                        <td>{{ stat.nb_matchs }} <span class="moyenne">({{ stat.moyenne }})</span></td>
+                        <td>{{ stat.nb_matchs }}</td>
+                        <td><span class="moyenne">{{ stat.moyenne }}</span></td>
                         <td>{{ stat.victoire }}</td>
                         <td>{{ stat.nul }}</td>
                         <td>{{ stat.defaite }}</td>
@@ -57,7 +59,8 @@
 $(document).ready(function() {
   $('#dataTableClassement').dataTable( {
       "paging": false,
-      "searching": false
+      "searching": false,
+      "info" : false
   });
 });
 </script>
