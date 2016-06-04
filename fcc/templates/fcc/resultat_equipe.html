@@ -8,7 +8,7 @@
         <div class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</div>
         <div class="ajout-news">
             <div class="my-rating"></div>
-            <span class="live-rating"></span>
+            <span class="live-rating">{{ result_equipe.moyenne_note|floatformat:"f" }}</span>
         </div>
         <script>
         var inita = {{ result_equipe.moyenne_note|floatformat:"f" }};
@@ -18,12 +18,6 @@
     starSize: 15,
     hoverColor: 'green',
     disableAfterRate: false,
-    onHover: function(currentIndex, currentRating, $el){
-        $('.live-rating').text(currentIndex);
-    },
-    onLeave: function(currentIndex, currentRating, $el){
-      $('.live-rating').text(currentRating);
-    },
     callback: function(currentRating, $el){
         // make a server call here
         //Prepare csrf token

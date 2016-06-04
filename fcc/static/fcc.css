@@ -195,6 +195,7 @@ float:right;
 
 .live-rating {
     float: right;
+    font-size: smaller;
 }
 
 .result-joueur {
