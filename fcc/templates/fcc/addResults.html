@@ -16,58 +16,46 @@
     {{ resultat_teamA_formset.management_form }}
     {{ resultat_teamB_formset.management_form }}
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h3 class="panel-title">FC Carolus</h3>
+                    <h3 class="panel-title">FC Carolus
+                    <input class="form-control input-sm" style="width: 55px; display: inline;" required=true id="scoreA" type="number" name="scoreA" maxlength="2">
+                    </h3>
                 </div>
-                <label for="scoreA">Score: </label>
-                <input id="scoreA" type="number" name="scoreA" maxlength="2">
                 <div class="panel-body">
-                    <table>
                     {% for form in resultat_teamA_formset %}
-                        <tr>
+                        <div class="form-inline form-group">
                         {% for field in form.visible_fields %}
-                            <td>
-                                <table>
-                                    <tr><td>{{ field.label }}</td>
-                                    <td>{{ field }}</td></tr>
-                                </table>
-                            </td>
+                            <label class="control-label">{{ field.label }}</label>
+                            {{ field }}
                         {% endfor %}
-                        </tr>
+                        </div>
                     {% endfor %}
-                    </table>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h3 class="panel-title">SAC</h3>
+                    <h3 class="panel-title">SAC
+                    <input class="form-control input-sm" style="width: 55px; display: inline;" required=true id="scoreB" type="number" name="scoreB" maxlength="2">
+                    </h3>
                 </div>
-                <label for="scoreB">Score: </label>
-                <input id="scoreB" type="number" name="scoreB" maxlength="2">
                 <div class="panel-body">
-                    <table>
                     {% for form in resultat_teamB_formset %}
-                        <tr>
+                        <div class="form-inline form-group">
                         {% for field in form.visible_fields %}
-                            <td>
-                                <table>
-                                    <tr><td>{{ field.label }}</td>
-                                    <td>{{ field }}</td></tr>
-                                </table>
-                            </td>
+                            <label class="control-label">{{ field.label }}</label>
+                            {{ field }}
                         {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    </table>
+                        </div>
+                        {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
     <input class="btn btn-primary" type="submit" name="submit" value="Enregistrer" />
     </form>
+</div>
 </div>
 {% endblock content %}

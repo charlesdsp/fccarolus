@@ -68,29 +68,44 @@ class ResultatTeamAForm(forms.ModelForm):
             model = Resultat
             fields = ('userFCC', 'buts',)
 
+    def __init__(self, *args, **kwargs):
+        super(ResultatTeamAForm, self).__init__(*args, **kwargs)
+        self.fields['userFCC'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;"})
+        self.fields['buts'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;"})
+
 
 class ResultatTeamBForm(forms.ModelForm):
     """Résultat d'un joueur de l'équipe B."""
 
     userFCC = forms.ModelChoiceField(queryset=UserFCC.objects.all(), label="Joueur")
-    buts = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2}), initial=0)
+    buts = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2, 'class': 'form-control input-sm'}), initial=0)
 
     class Meta:
         # Provide an association between the ModelForm and a model
             model = Resultat
             fields = ('userFCC', 'buts',)
 
+    def __init__(self, *args, **kwargs):
+        super(ResultatTeamBForm, self).__init__(*args, **kwargs)
+        self.fields['userFCC'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;"})
+        self.fields['buts'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;"})
+
 
 class ResultatMatchForm(forms.ModelForm):
     """Score du match."""
 
-    scoreA = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2}), initial=0)
-    scoreB = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2}), initial=0)
+    scoreA = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2, 'class': 'form-control input-sm', 'style': "width: auto; display: inline;"}), initial=0)
+    scoreB = forms.IntegerField(widget=forms.TextInput(attrs={'size': 2, 'class': 'form-control input-sm', 'style': "width: auto; display: inline;"}), initial=0)
 
     class Meta:
         # Provide an association between the ModelForm and a model
             model = Match
             fields = ('scoreA', 'scoreB',)
+
+    def __init__(self, *args, **kwargs):
+        super(ResultatMatchForm, self).__init__(*args, **kwargs)
+        self.fields['scoreA'].widget.attrs.update({'class': 'form-control input-sm', })
+        self.fields['scoreA'].widget.attrs.update({'class': 'form-control input-sm'})
 
 
 class UserForm(forms.ModelForm):
