@@ -1,11 +1,16 @@
 {% load thumbnail %}
 <ul class="list-unstyled">
 {% for result_equipe in result_equipe %}
-    <li class="team"> <div id="id-user-{{ result_equipe.userFCC.idUserFCC }}" class="result-joueur">{% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
-            <img src="{{ im.url }}">
-        {% endthumbnail %}
-        {{ result_equipe.userFCC.user.username }}</div>
-        <div class="buts"><i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}</div>
+    <li class="team">
+        <div id="id-user-{{ result_equipe.userFCC.idUserFCC }}" class="result-joueur">
+            {% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
+                <img src="{{ im.url }}">
+            {% endthumbnail %}
+            {{ result_equipe.userFCC.user.username }}
+        </div>
+        <div class="buts">
+            <i class="fa fa-futbol-o" aria-hidden="true"></i> x {{ result_equipe.buts }}
+        </div>
         <div class="ajout-news">
             <div class="my-rating"></div>
             <span class="live-rating">{{ result_equipe.moyenne_note|floatformat:"f" }}</span>

@@ -11,7 +11,7 @@ from django.forms.models import modelformset_factory
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Avg, Sum
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur,\
     News, Joker, NoteMatch
 from django.contrib.auth.models import User
@@ -129,17 +129,26 @@ def compo(request):
     en_attente = Compo.objects.filter(session__id_session=sessionActive.id_session, userFCC__inscrit='0')\
         .order_by('userFCC__user__username')
     liste_invite = UserFCC.objects.filter(titulaire='0', inscrit='1')
-    print("Invité ----" + str(liste_invite))
     liste_jokers = Joker.objects.filter(match=match)
     joker_form = JokerForm()
+    print(joker_form)
     return render(request, 'fcc/compo.html', {
         'userFCC': userFCC,
         'absents': absents,
         'en_attente': en_attente,
         'liste_jokers': liste_jokers,
         'joker_form': joker_form,
-        'liste_invite': liste_invite
+        'liste_invite': liste_invite,
+        'match': match
         })
+
+
+def invites(request):
+    """Affiche les invites dans la compo."""
+    match = Match.objects.filter(ouverte=1)[0]
+    liste_invite = UserFCC.objects.filter(titulaire='0', inscrit='1')
+    liste_jokers = Joker.objects.filter(match=match)
+    return render(request, 'fcc/compo_invites.html', {'liste_invite': liste_invite, 'liste_jokers': liste_jokers})
 
 
 def loginFCC(request):
@@ -496,3 +505,29 @@ def relance(request):
     msg.attach_alternative(message_html, "text/html")
     msg.send()
     return redirect('/fcc/home')
+
+
+def supp_news(request):
+    """Suppression d'une news."""
+    if request.method == "POST":
+        if request.is_ajax():
+            # Always use get on request.POST. Correct way of querying a QueryDict.
+            id_news = request.POST.get('id_news')
+            print(id_news)
+            news = News.objects.get(pk=id_news)
+            print(news)
+            news.delete()
+            return HttpResponse("Success")
+
+
+def supp_joker(request):
+    """Suppression d'un joker."""
+    if request.method == "POST":
+        if request.is_ajax():
+            # Always use get on request.POST. Correct way of querying a QueryDict.
+            id_joker = request.POST.get('id_joker')
+            print(id_joker)
+            joker = Joker.objects.get(pk=id_joker)
+            print(joker)
+            joker.delete()
+            return HttpResponse("Success")

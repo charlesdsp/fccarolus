@@ -26,5 +26,8 @@ urlpatterns = [
     url(r'^session/(?P<session>\d+)$', views.session),
     url(r'^session$', views.session),
     url(r'^news$', views.news, name='news'),
+    url(r'^invites$', views.invites, name='invites'),
     url(r'^relance$', views.relance),
+    url(r'^supp_news$', views.supp_news),
+    url(r'^supp_joker$', views.supp_joker),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

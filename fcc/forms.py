@@ -27,6 +27,10 @@ class YearAwardsForm(forms.Form):
             liste_num_year.append((award['annee'], (award['annee'])))
     year = forms.ChoiceField(choices=liste_num_year)
 
+    def __init__(self, *args, **kwargs):
+        super(YearAwardsForm, self).__init__(*args, **kwargs)
+        self.fields['year'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;", })
+
 
 class SessionForm(forms.Form):
     """Sélection de l'année des awards."""
@@ -37,11 +41,20 @@ class SessionForm(forms.Form):
     liste_num_session.append(('Global', ('Global')))
     s = forms.ChoiceField(choices=liste_num_session)
 
+    def __init__(self, *args, **kwargs):
+        super(SessionForm, self).__init__(*args, **kwargs)
+        self.fields['s'].widget.attrs.update({'class': 'form-control input-sm', 'style': "width: auto; display: inline;", })
+
 
 class JokerForm(forms.Form):
     """Ajout d'un joker dans la compo."""
 
-    joker = forms.CharField(label="Joker", max_length=20)
+    joker = forms.CharField(max_length=20, widget=forms.TextInput(attrs={
+        'class': 'form-control input-sm',
+        'required': True,
+        'placeholder': "Joker",
+        'style': "width: auto; display: inline;",
+        }))
 
 
 class ResultatTeamAForm(forms.ModelForm):
@@ -91,6 +104,11 @@ class UserForm(forms.ModelForm):
             model = User
             fields = ('email', 'password')
 
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'class': 'form-control input-sm', })
+        self.fields['password'].widget.attrs.update({'class': 'form-control input-sm'})
+
 
 class UserFCCForm(forms.ModelForm):
     """Edition du profil."""
@@ -103,6 +121,10 @@ class UserFCCForm(forms.ModelForm):
             model = UserFCC
             fields = ('tel', 'photo',)
 
+    def __init__(self, *args, **kwargs):
+        super(UserFCCForm, self).__init__(*args, **kwargs)
+        self.fields['tel'].widget.attrs.update({'class': 'form-control input-sm', })
+
 
 class NewsForm(forms.ModelForm):
     """Ajout d'une news sur la page d'accueil."""
@@ -114,3 +136,8 @@ class NewsForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
             model = News
             fields = ('titre', 'message',)
+
+    def __init__(self, *args, **kwargs):
+        super(NewsForm, self).__init__(*args, **kwargs)
+        self.fields['titre'].widget.attrs.update({'class': 'form-control input-sm', 'required': True, })
+        self.fields['message'].widget.attrs.update({'class': 'form-control input-sm', 'required': True, })

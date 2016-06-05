@@ -4,9 +4,21 @@
     <li class="team">
         <h2>{{ news.titre }}</h2>
         <span class="newsuser">
-            <div class="user-image">{% thumbnail news.userFCC.photo "30x30" crop="80% top" as im %}
-                <img src="{{ im.url }}" class="user-image">
-            {% endthumbnail %}</div><div class="news-who"> &nbsp; posté par {{ news.userFCC.user.username }} le {{ news.date|date:"d b Y" }}</div></span>
-        <div class="news-message">{% autoescape off %}{{ news.message|linebreaks }}{% endautoescape %}</div>
+            <div class="user-image">
+                {% thumbnail news.userFCC.photo "30x30" crop="80% top" as im %}
+                    <img src="{{ im.url }}" class="user-image">
+                    {% endthumbnail %}
+            </div>
+            <div class="news-who"> &nbsp; posté par {{ news.userFCC.user.username }} le {{ news.date|date:"d b Y" }}
+                {% if  news.userFCC.user == request.user %}
+                    <a href ="#" onclick="suppNews({{ news.id }});return false;">
+                        <i id="news-{{ news.id }}" class="fa fa-times-circle" aria-hidden="true" style="color:red;"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </span>
+        <div class="news-message">
+            {% autoescape off %}{{ news.message|linebreaks }}{% endautoescape %}
+        </div>
 {% endfor %}
 </ul>
