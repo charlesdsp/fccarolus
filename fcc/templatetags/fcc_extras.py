@@ -26,9 +26,8 @@ def get_compo_equipe(**kwargs):
 def get_resultat_equipe(**kwargs):
     """Page de résultat d'un match."""
     equipe = kwargs['equipe']
-    print(equipe)
     m = kwargs['m']
-    print(m)
+    old = kwargs['old']
     match = Match.objects.get(pk=m)
     result_equipe = Resultat.objects.filter(match=match, equipe=equipe).order_by('-buts')
-    return {'result_equipe': result_equipe, 'm': m}
+    return {'result_equipe': result_equipe, 'm': m, 'old': old}

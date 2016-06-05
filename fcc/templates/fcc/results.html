@@ -4,23 +4,6 @@
 {% load fcc_extras %}
 {% block content %}
 
-<script>
-function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-               var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) == (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-             }
-          }
-      }
- return cookieValue;
-}
-</script>
 <div class="well well-sm">
         <div id="{{ match.id_match }}" class="container">
             <p>Résultat du match du {{ match.dateMatch }}</p>
@@ -34,7 +17,7 @@ function getCookie(name) {
                         <h3 class="panel-title">FC Carolus {{ match.scoreA }}</h3>
                     </div>
                     <div class="panel-body">
-                        {% get_resultat_equipe m=match.id_match equipe="A" %}
+                        {% get_resultat_equipe m=match.id_match equipe="A" old=False %}
                     </div>
                 </div>
             </div>
@@ -44,7 +27,7 @@ function getCookie(name) {
                         <h3 class="panel-title">SAC {{ match.scoreB }}</h3>
                     </div>
                     <div class="panel-body">
-                        {% get_resultat_equipe m=match.id_match equipe="B" %}
+                        {% get_resultat_equipe m=match.id_match equipe="B" old=False %}
                     </div>
                 </div>
             </div>

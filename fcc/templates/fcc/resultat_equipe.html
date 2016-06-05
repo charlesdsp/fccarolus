@@ -15,6 +15,17 @@
             <div class="my-rating"></div>
             <span class="live-rating">{{ result_equipe.moyenne_note|floatformat:"f" }}</span>
         </div>
+        {% if old %}
+        <script>
+        var inita = {{ result_equipe.moyenne_note|floatformat:"f" }};
+        var init = inita / 2;
+        $(".my-rating").starRating({
+    initialRating: init,
+    starSize: 15,
+    readOnly: true
+        });
+    </script>
+        {% else %}
         <script>
         var inita = {{ result_equipe.moyenne_note|floatformat:"f" }};
         var init = inita / 2;
@@ -56,5 +67,6 @@
         }
         });
     </script>
+    {% endif %}
 {% endfor %}
 </ul>
