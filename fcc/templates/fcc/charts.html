@@ -1,0 +1,38 @@
+{% extends 'fcc/base.html' %}
+{% block title %}Graphiques{% endblock title %}
+{% block id %}4{% endblock id %}
+{% load thumbnail %}
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {packages: ['corechart'], 'language': 'fr'});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+      var djangoData = JSON.parse('{{ note_for_graph|safe }}');
+      var data = google.visualization.arrayToDataTable(djangoData);
+
+          var options = {
+            title: 'Historique des notes de CHarlie',
+            hAxis: {title: 'Date', minValue: 0, maxValue: 200},
+            vAxis: {title: 'Note', minValue: 0, maxValue: 10},
+            legend: 'none'
+          };
+
+      // Instantiate and draw the chart.
+       var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+</script>
+
+
+
+<div class="well well-sm">
+        <div class="container">
+            <p>Historique des notes</p>
+        </div>
+    </div>
+    <div class="container">
+        <div id="chart_div"/>
+</div>
+{% endblock content %}

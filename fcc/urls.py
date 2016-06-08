@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^relance$', views.relance),
     url(r'^supp_news$', views.supp_news),
     url(r'^supp_joker$', views.supp_joker),
+    url(r'^charts$', views.charts),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -18,7 +18,8 @@ from django.contrib.auth.models import User
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm,\
     UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
 import operator
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 import logging
 from sorl.thumbnail.log import ThumbnailLogHandler
 
@@ -207,13 +208,11 @@ def addResultats(request):
         if resultat_teamA_formset.is_valid() and resultat_teamB_formset.is_valid and resultat_match.is_valid:
             """Enregistrement du résultat du match."""
             resultat_match.id_match = idMatch
+            resultat_match.ouverte = 2
             resultat_match.save()
             """Ouverture du match suivant."""
-            ancienneJournee = Match.objects.get(id_match=idMatch.id_match)
-            ancienneJournee.ouverte = 2
-            ancienneJournee.save()
             try:
-                prochaineJournee = Match.objects.filter(ouverte=0, inscrits=0, dateMatch__gt=ancienneJournee.dateMatch)\
+                prochaineJournee = Match.objects.filter(ouverte=0, inscrits=0, dateMatch__gt=resultat_match.dateMatch)\
                     .order_by('dateMatch')[0]
             except:
                 print('Plus de match prévus')
@@ -461,6 +460,16 @@ def awards(request, year=None):
     year_form = YearAwardsForm(initial={'year': annee})
     return render(request, 'fcc/awards.html', {
         'liste_awards': liste_awards, 'liste_vainqueurs': liste_vainqueurs, 'year': annee, 'year_form': year_form
+        })
+
+
+def charts(request):
+    """Graphiques."""
+    liste_notes_1 = Resultat.objects.filter(userFCC=1).order_by('match_id__dateMatch').values_list('match_id__dateMatch', 'moyenne_note')
+    note_for_graph = [[x[0], float(x[1])] for x in liste_notes_1]
+    print(json.dumps(note_for_graph, cls=DjangoJSONEncoder))
+    return render(request, 'fcc/charts.html', {
+        'note_for_graph': json.dumps(note_for_graph, cls=DjangoJSONEncoder),
         })
 
 
