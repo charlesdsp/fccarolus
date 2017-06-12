@@ -2,7 +2,7 @@
 <ul class="list-unstyled">
 {% load thumbnail %}
 {% for invite in liste_invite %}
-    <li class="team"> {% thumbnail invite.photo "30x30" crop="80% top" as im %}
+    <li class="team"> {% thumbnail invite.photo "40x40" crop="80% top" as im %}
             <img src="{{ im.url }}">
         {% endthumbnail %}
         {{ invite.user.username }}

@@ -30,7 +30,7 @@
             <h3>Leaders</h3>
             <ul class="list-unstyled">
             {% for leader in leaders %}
-            <li class="team"> {% thumbnail leader.userFCC.photo "30x30" crop="80% top" as im %}
+            <li class="team"> {% thumbnail leader.userFCC.photo "45x45" crop="80% top" as im %}
                     <img src="{{ im.url }}">
                 {% endthumbnail %}
                 {{ leader.userFCC.user.username }} {{ leader.points }} pts {{ leader.victoire }} Victoires {{ leader.buts }} <i class="fa fa-futbol-o" aria-hidden="true"></i>

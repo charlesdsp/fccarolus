@@ -7,6 +7,7 @@ home, inscrits etc.
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
@@ -14,7 +15,6 @@ from django.db.models import Avg, Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from fcc.models import UserFCC, Session, Compo, Match, Resultat, Stat, Award, AwardVainqueur,\
     News, Joker, NoteMatch
-from django.contrib.auth.models import User
 from fcc.forms import ConnexionForm, ResultatTeamAForm, ResultatTeamBForm, ResultatMatchForm, UserForm,\
     UserFCCForm, YearAwardsForm, NewsForm, JokerForm, SessionForm
 import operator
@@ -83,16 +83,21 @@ def user(request, id_user=None):
         userFCC_form = UserFCCForm(data=request.POST)
 
         if user_form.is_valid() and userFCC_form.is_valid():
+            print("Form valide")
             u = request.user
             uFCC = UserFCC.objects.get(user=u)
             u.email = user_form.cleaned_data['email']
             new_pass = user_form.cleaned_data['password']
+            print("Changement de mot de passe ", new_pass, u.email)
             u.set_password(new_pass)
             u.save()
             uFCC.tel = userFCC_form.cleaned_data['tel']
             if 'photo' in request.FILES:
                 uFCC.photo = request.FILES['photo']
             uFCC.save()
+            success = True
+            logout(request)
+            return render(request, 'fcc/login.html', {'success': success})
         else:
             print(user_form.errors, userFCC_form.errors)
 
@@ -467,9 +472,9 @@ def charts(request):
     """Graphiques."""
     liste_notes_1 = Resultat.objects.filter(userFCC=1).order_by('match_id__dateMatch').values_list('match_id__dateMatch', 'moyenne_note')
     note_for_graph = [[x[0], float(x[1])] for x in liste_notes_1]
-    print(json.dumps(note_for_graph, cls=DjangoJSONEncoder))
+    print(json.dumps(list(note_for_graph), cls=DjangoJSONEncoder))
     return render(request, 'fcc/charts.html', {
-        'note_for_graph': json.dumps(note_for_graph, cls=DjangoJSONEncoder),
+        'note_for_graph': NoteChart(),
         })
 
 

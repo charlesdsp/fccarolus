@@ -3,7 +3,7 @@
 {% for result_equipe in result_equipe %}
     <li class="team">
         <div id="id-user-{{ result_equipe.userFCC.idUserFCC }}" class="result-joueur">
-            {% thumbnail result_equipe.userFCC.photo "30x30" crop="80% top" as im %}
+            {% thumbnail result_equipe.userFCC.photo "40x40" crop="80% top" as im %}
                 <img src="{{ im.url }}">
             {% endthumbnail %}
             {{ result_equipe.userFCC.user.username }}

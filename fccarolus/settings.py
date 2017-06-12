@@ -108,6 +108,7 @@ EMAIL_HOST_USER = 'fccarolus@fccarolus.com'
 EMAIL_HOST_PASSWORD = 'yugagflhv6'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'fccarolus@fccarolus.com'
 
 
 LOGIN_REDIRECT_URL = 'home'

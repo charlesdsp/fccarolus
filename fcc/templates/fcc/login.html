@@ -15,6 +15,9 @@
 {% if user.is_authenticated %}
 Vous êtes connecté, {{ user.username }} !
 {% else %}
+{% if success %}
+<div class="alert alert-success" role="alert">Mot de passe changé avec succès</div>
+{% endif %}
 <form class="form-signin" style="max-width: 330px" method="post" action="">
     {% csrf_token %}
             <div style="margin-bottom: 25px" class="input-group">
@@ -24,6 +27,9 @@ Vous êtes connecté, {{ user.username }} !
             <div style="margin-bottom: 25px" class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                 <input id="id_{{ form.password.name }}" type="password" class="form-control" name="{{ form.password.name }}" value="" placeholder="Mot de passe">
+            </div>
+            <div style="margin-bottom: 25px">
+                <span><a href="/fcc/password">Mot de passe oublié ?</a></span>
             </div>
             <div style="margin-top:10px" class="form-group">
                 <div class="col-sm-12 controls">

@@ -5,7 +5,7 @@ home, inscrits etc.
 """
 
 from django.conf.urls import url
-from . import views
+from . import views, passwordReset
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^relance$', views.relance),
     url(r'^supp_news$', views.supp_news),
     url(r'^supp_joker$', views.supp_joker),
-    url(r'^charts$', views.charts),
+    url(r'^reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', passwordReset.PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
+    url(r'^password', passwordReset.ResetPasswordRequestView.as_view(), name="reset_password")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
