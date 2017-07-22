@@ -54,6 +54,7 @@ class YearAwardsForm(forms.Form):
         if award['annee'] not in annee:
             annee.append(award['annee'])
             liste_num_year.append((award['annee'], (award['annee'])))
+    print(liste_num_year)
     year = forms.ChoiceField(choices=liste_num_year)
 
     def __init__(self, *args, **kwargs):
