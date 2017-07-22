@@ -22,7 +22,10 @@ class ResetPasswordRequestView(FormView):
 
     @staticmethod
     def validate_email_address(email):
-
+        """
+        This method here validates the if the input is an email address or not.
+        Its return type is boolean, True if the input is a email address or False if its not.
+        """
         try:
             validate_email(email)
             return True
@@ -33,17 +36,17 @@ class ResetPasswordRequestView(FormView):
         c = {
             'email': user.email,
             'domain': request.META['HTTP_HOST'],
-            'site_name': 'your site',
+            'site_name': 'FC Carolus',
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
             'user': user,
             'token': default_token_generator.make_token(user),
             'protocol': 'http',
         }
-        subject_template_name = 'registration/password_reset_subject.txt'
+        subject_template_name = 'password_reset_subject.txt'
         # copied from
         # django/contrib/admin/templates/registration/password_reset_subject.txt
         # to templates directory
-        email_template_name = 'registration/password_reset_email.html'
+        email_template_name = 'password_reset_email.html'
         # copied from
         # django/contrib/admin/templates/registration/password_reset_email.html
         # to templates directory
@@ -59,6 +62,7 @@ class ResetPasswordRequestView(FormView):
         try:
             if form.is_valid():
                 data = form.cleaned_data["email_or_username"]
+                print(data)
             # uses the method written above
             if self.validate_email_address(data) is True:
                 '''
@@ -68,15 +72,31 @@ class ResetPasswordRequestView(FormView):
                     Q(email=data) | Q(username=data))
                 if associated_users.exists():
                     for user in associated_users:
-                        self.reset_password(user, request)
-
+                        c = {
+                                'email': user.email,
+                                'domain': request.META['HTTP_HOST'],
+                                'site_name': 'your site',
+                                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                'user': user,
+                                'token': default_token_generator.make_token(user),
+                                'protocol': 'http',
+                                }
+                        subject_template_name = 'fcc/password_reset_subject.txt'
+                        # copied from django/contrib/admin/templates/registration/password_reset_subject.txt to templates directory
+                        email_template_name = 'fcc/password_reset_email.html'
+                        # copied from django/contrib/admin/templates/registration/password_reset_email.html to templates directory
+                        subject = loader.render_to_string(subject_template_name, c)
+                        # Email subject *must not* contain newlines
+                        subject = ''.join(subject.splitlines())
+                        email = loader.render_to_string(email_template_name, c)
+                        send_mail(subject, email, DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
                     result = self.form_valid(form)
                     messages.success(
-                        request, 'An email has been sent to {0}. Please check its inbox to continue reseting password.'.format(data))
+                        request, "Un email a été envoyé à {0}. Consultez votre email pour poursuivre votre demande.".format(data))
                     return result
                 result = self.form_invalid(form)
                 messages.error(
-                    request, 'No user is associated with this email address')
+                    request, 'Adresse email inconnue')
                 return result
             else:
                 '''
@@ -85,14 +105,32 @@ class ResetPasswordRequestView(FormView):
                 associated_users = User.objects.filter(username=data)
                 if associated_users.exists():
                     for user in associated_users:
-                        self.reset_password(user, request)
+                        for user in associated_users:
+                            c = {
+                                    'email': user.email,
+                                    'domain': request.META['HTTP_HOST'],
+                                    'site_name': 'your site',
+                                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                    'user': user,
+                                    'token': default_token_generator.make_token(user),
+                                    'protocol': 'http',
+                                    }
+                        subject_template_name = 'fcc/password_reset_subject.txt'
+                        # copied from django/contrib/admin/templates/registration/password_reset_subject.txt to templates directory
+                        email_template_name = 'fcc/password_reset_email.html'
+                        # copied from django/contrib/admin/templates/registration/password_reset_email.html to templates directory
+                        subject = loader.render_to_string(subject_template_name, c)
+                        # Email subject *must not* contain newlines
+                        subject = ''.join(subject.splitlines())
+                        email = loader.render_to_string(email_template_name, c)
+                        send_mail(subject, email, DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
                     result = self.form_valid(form)
                     messages.success(
-                        request, "Email has been sent to {0}'s email address. Please check its inbox to continue reseting password.".format(data))
+                        request, "Un email a été envoyé à {0}. Consultez votre email pour poursuivre votre demande.".format(data))
                     return result
                 result = self.form_invalid(form)
                 messages.error(
-                    request, 'This username does not exist in the system.')
+                    request, 'Login inconnu.')
                 return result
             messages.error(request, 'Invalid Input')
         except Exception as e:
