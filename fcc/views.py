@@ -443,6 +443,12 @@ def majInscrits():
     UserFCC.objects.all().update(inscrit=0)
 
 
+def raz(request):
+    """Réinitialisation des informations d'inscription au prochain match."""
+    majInscrits()
+    return redirect('/fcc/home')
+
+
 @login_required
 def user_logout(request):
     """Déconnexion du site."""

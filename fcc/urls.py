@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^results$', views.results),
     url(r'^stats$', views.stats),
     url(r'^majclass$', views.majClass),
+    url(r'^raz$', views.raz),
     url(r'^login$', views.loginFCC),
     url(r'^inscription/(?P<dispo>\d+)$', views.inscription),
     url(r'^addResults$', views.addResultats),
