@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Avg, Sum
 from django.http import HttpResponse, HttpResponseRedirect
@@ -225,6 +225,7 @@ def addResultats(request):
                 prochaineJournee.ouverte = 1
                 prochaineJournee.save()
             majInscrits()
+            mailResult(idMatch.dateMatch, idMatch.scoreA, idMatch.scoreB)
             """Calcul de l"équipe gagnante."""
             winA = 2
             winB = 2
@@ -260,6 +261,31 @@ def addResultats(request):
             'resultat_teamA_formset': resultat_teamA_formset,
             'resultat_teamB_formset': resultat_teamB_formset,
             })
+
+
+def mailResult(dateMatch, scoreA, scoreB):
+    suj = (
+            {
+                'dateMatch': dateMatch
+            }
+        )
+    sujet = render_to_string('fcc/resultats_subject.txt', suj)
+    sujet = ''.join(sujet.splitlines())
+    html = get_template('fcc/mail_resultats.html')
+
+    d = (
+            {
+                'dateMatch': dateMatch,
+                'scoreA': scoreA,
+                'scoreB': scoreB,
+            }
+        )
+    message_text = html.render(d)
+    message_html = html.render(d)
+    liste_mail = User.objects.filter(email__contains='@').values_list('email', flat=True)
+    msg = EmailMultiAlternatives(sujet, message_text, 'fccarolus@fccarolus.com', liste_mail)
+    msg.attach_alternative(message_html, "text/html")
+    msg.send()
 
 
 def majStat(userFCC, win, buts, session):
@@ -367,7 +393,7 @@ def stats(request, s=None):
         if session_form.is_valid():
             session_envoyee = session_form.cleaned_data['s']
             if session_envoyee == 'Global':
-                liste_user_stat =[]
+                liste_user_stat = []
                 stats_globales = Stat.objects.values('userFCC').annotate(
                     points=Sum('points'),
                     victoire=Sum('victoire'),
@@ -505,10 +531,16 @@ def relance(request):
     nb_absents = UserFCC.objects.filter(inscrit=3).count()
     nb_en_attente = UserFCC.objects.filter(inscrit=0, titulaire=True).count()
     liste_mail = User.objects.filter(email__contains='@').values_list('email', flat=True)
-    print(type(liste_mail))
-    sujet = 'Relance : ' + str(nb_inscrits) + ' inscrits | ' \
-        + str(nb_absents) + ' absents | ' \
-        + str(nb_en_attente) + ' en attente'
+    # print(type(liste_mail))
+    suj = (
+            {
+                'inscrits': nb_inscrits,
+                'absents': nb_absents,
+                'attente': nb_en_attente
+            }
+        )
+    sujet = render_to_string('fcc/relance_subject.txt', suj)
+    sujet = ''.join(sujet.splitlines())
     html = get_template('fcc/relance.html')
 
     d = (
